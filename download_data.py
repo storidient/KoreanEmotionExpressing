@@ -9,7 +9,7 @@ class OpenKorean:
 
   Attributes:
     path : a path of json file
-    output : a list of dictionary with word information
+    output : a list of dictionaries with word information
        {word : a list of representation form of words
         word_unit : a list of 'unit' of words (e.g. 'phrase', 'word', 'saying')
         definition : a list of definition of words 
@@ -41,7 +41,7 @@ class StandardKorean:
 
   Attributes:
     path : a path of json file
-    output : a list of dictionary with word information
+    output : a list of dictionaries with word information
        {word : a list of representation form of words
         word_unit : a list of 'unit' of words (e.g. 'phrase', 'word', 'saying')
         definition : a list of definition of words 
