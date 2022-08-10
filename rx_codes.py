@@ -28,11 +28,3 @@ old_kor_rx = re.compile('.*' + build_rx(old_korean_unicode), re.UNICODE)
 chinese_rx = re.compile(build_rx(chinese_unicode), re.UNICODE)
 blank_chinese= re.compile('[\u3000]', re.UNICODE)
 katakana_middle = re.compile('[\u30fb]', re.UNICODE)
-
-def del_chinese(item : str) -> str:
-  """delete the Chinese letters and empty brackets ()"""
-  return re.sub('[\[\(][\]\)]', '', chinese_rx.sub('', item))
-
-def del_space(self, item : str) -> str:
-  """delete unneccessary spaces in a word"""
-  return re.sub(' +', ' ', item.strip())
