@@ -19,7 +19,7 @@ chinese_unicode = [('\u31c0', '\u31ef'),
                    ('\u4dc0', '\u4dff'),
                    ('\u4e00', '\u9fff')]
 
-def build_rx(unicode_list : List[tuple[str, str]]) -> str:
+def build_rx(unicode_list : List[Tuple[str, str]]) -> str:
   """compile regular expression with unicodes"""
   unicodes = ''.join(['%s-%s' % (s,t) for s, t in unicode_list])
   return '[' + unicodes +']'
