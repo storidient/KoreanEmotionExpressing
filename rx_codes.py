@@ -1,5 +1,5 @@
 import re
-from typing import List
+from typing import List, Tuple
 
 old_korean_unicode = [('\u3164', '\u318c'),
                       ('\u318e', '\u318f'), 
