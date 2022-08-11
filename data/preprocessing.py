@@ -93,8 +93,9 @@ class ReviseDef(CleanWord):
     without_chinese = self.del_chinese(item)
     without_roman = self.roman_bracket.sub('', without_chinese)
     without_numbering = self.del_numbering(without_roman)
+    output = re.sub('\</?(FL|sub)\>|<DR />', '', without_numbering)
 
-    return re.sub('\</?(FL|sub)\>|<DR />', '', without_numbering)
+    return self.del_space(output.split('<동의 관용구>')[0])
 
 
 class CleanInfo:
