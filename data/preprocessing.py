@@ -63,8 +63,11 @@ class ReviseRep(CleanWord):
       if len(options) == 0:
         options.append(phrase)
       
-      options = sum(list(map(lambda x : Options(x).output, options)), [])
-    return rep, list(set(options))
+      options = list(set(
+        sum(list(map(lambda x : Options(x).output, options)), [])
+      ))
+      
+    return rep, options
 
   def josa_option(self, word : str, options : Optional[List[str]] = None):
     """Delete '(Option)' in the representation form (e.g. 밥(을) 먹다)"""
