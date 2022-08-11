@@ -18,7 +18,7 @@ class CleanWord:
     self.blank_chinese = blank_chinese
     self.katakana_middle = katakana_middle
   
-  def del_chinese(item : str) -> str:
+  def del_chinese(self, item : str) -> str:
     """Delete the Chinese letters and empty brackets (e.g. '[]', '()')"""
     return re.sub('[\[\(][\]\)]', '', self.chinese_rx.sub('', item))
 
