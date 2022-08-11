@@ -117,7 +117,7 @@ class CleanInfo:
                allow_broken : bool = False,
                del_overlapped : bool = True):
     
-    self.input = [] + input
+    self.input = input
     self._word_clean = ReviseRep(save_options).main
     self._def_clean = ReviseDef().main
     self._filter = FilterWord(allow_old, 
