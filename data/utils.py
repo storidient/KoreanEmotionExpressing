@@ -74,9 +74,7 @@ class Options:
         possible_form = re.sub(target, option_set[idx], possible_form)
       
       self.output.append(possible_form)
-
-      
-      
+  
       
 class ReviseRep(CleanWord):
   def __init__(self, save_options : bool = True):
