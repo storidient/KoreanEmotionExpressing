@@ -80,7 +80,7 @@ class ReviseRep(CleanWord):
       without_josa = list(map(lambda x : re.sub('\(.*\)', '', x), options))
       with_josa = list(map(lambda x : re.sub('[\(\)]', '', x), options))
       options = without_josa + with_josa
-    
+  
     return rep, options
 
   def main(self, word : str) -> str:
@@ -97,8 +97,7 @@ class ReviseRep(CleanWord):
     if re.match('.*\(.*\)', rep):
       rep, options = self.josa_option(rep,options)
     
-    rep = self.del_space(rep)
-    
+    rep = self.del_space(rep)   
     if self.save_options == True:
       options = list(map(self.del_space, options))
       options.append(rep)
