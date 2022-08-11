@@ -1,5 +1,6 @@
 import re
 from cached_property import cached_property
+from data.rx_codes import *
 from typing import List
 from itertools import product
 
@@ -41,3 +42,38 @@ class Options:
         possible_form = re.sub(target, option_set[idx], possible_form)
       
       self.output.append(possible_form)
+
+      
+      
+ 
+class CleanWord:
+  """Delete unneccessary marks in a word
+
+  Attributes:
+    chinese_rx : the regular expression of Chinese letters
+    blank_chinese : the regular expression of 'blank' in Chinese letters
+    katakana_middle : the regular expression of 'ㆍ' in Japanese(Katakana) letters
+  """
+  def __init__(self):
+    self.chinese_rx = chinese_rx
+    self.blank_chinese = blank_chinese
+    self.katakana_middle = katakana_middle
+    self.roman_bracket = roman_bracket
+  
+  def del_chinese(self, item : str) -> str:
+    """Delete the Chinese letters and empty brackets (e.g. '[]', '()')"""
+    return re.sub('[\[\(][\]\)]', '', self.chinese_rx.sub('', item))
+
+  def del_space(self, item : str) -> str:
+    """Delete unneccessary spaces in a word"""
+    return re.sub(' +', ' ', item.strip())
+  
+  def del_all(self, word : str) -> str:
+    """Delete all the unneccessary marks
+    (e.g. Arabian numbers, under-bar, chinese letters, hyphen, end marks)
+    """
+    without_chinese = self.blank_chinese.sub(' ', self.del_chinese(word))
+    without_underbar = re.sub('_', ' ', without_chinese)
+    without_katakana = self.katakana_middle.sub('ㆍ', without_underbar)    
+    
+    return re.sub('[\.,0-9\-]', '', without_katakana)
