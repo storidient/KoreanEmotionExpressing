@@ -70,6 +70,7 @@ class CleanWord:
     """Delete all the unneccessary marks
     (e.g. Arabian numbers, under-bar, chinese letters, hyphen, end marks)
     """
+    word = unicodedata.normalize('NFC', word)
     without_chinese = self.blank_chinese.sub(' ', self.del_chinese(word))
     without_underbar = re.sub('_', ' ', without_chinese)
     without_katakana = self.katakana_middle.sub('ㆍ', without_underbar)    
