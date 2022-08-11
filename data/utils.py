@@ -1,4 +1,4 @@
-import re
+import re, unicodedata
 from cached_property import cached_property
 from data.rx_codes import *
 from typing import List
