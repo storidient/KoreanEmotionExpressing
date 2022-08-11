@@ -76,3 +76,39 @@ class CleanWord:
     without_katakana = self.katakana_middle.sub('ㆍ', without_underbar)    
     
     return re.sub('[\.,0-9\-]', '', without_katakana)
+
+
+class FilterWord:
+  """Filter the words
+
+    Attributes:
+      allow_old : allow old Korean letters
+      allow_broken : allow broken Korean letter
+  """
+  def __init__(self, 
+               allow_old : bool = False,
+               allow_broken : bool = False):
+    self.allow_old = allow_old
+    self.allow_broken = allow_broken #allow
+    self._build()
+  
+  def _build(self):
+    if self.allow_old == False:
+      from data.rx_codes import old_kor_rx
+      self.old_kor_rx = old_kor_rx
+
+    if self.allow_broken == False:
+      self.broken_kor_rx = re.compile('^[ㄱ-ㅎㅏ-ㅣ]')
+
+  def main(self, item : str) -> bool:
+    item = unicodedata.normalize('NFC', item)
+
+    if self.allow_old == False:
+      if self.old_kor_rx.match(item):
+        return False
+
+    if self.allow_broken == False:
+      if self.broken_kor_rx.match(item):
+        return False
+
+    return True
