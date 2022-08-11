@@ -44,8 +44,6 @@ class Options:
       self.output.append(possible_form)
 
       
-      
- 
 class CleanWord:
   """Delete unneccessary marks in a word
 
