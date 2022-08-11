@@ -40,13 +40,13 @@ class ReviseRep(CleanWord):
 
   def josa_option(self, word : str, options : Optional[List[str]] = None):
     """Delete '(Option)' in the representation form (e.g. 밥(을) 먹다)"""
-    rep = re.sub('\([\)]*\)', '', word)    
+    rep = re.sub('\([^\)]*\)', '', word)    
     
     if self.save_options == True:
       if len(options) == 0:
         options.append(word)
       
-      without_josa = list(map(lambda x : re.sub('\([\)]*\)', '', x), options))
+      without_josa = list(map(lambda x : re.sub('\([^\)]*\)', '', x), options))
       with_josa = list(map(lambda x : re.sub('[\(\)]', '', x), options))
       options = without_josa + with_josa
   
