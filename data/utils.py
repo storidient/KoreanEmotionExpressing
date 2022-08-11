@@ -1,3 +1,4 @@
+import re
 from cached_property import cached_property
 from typing import List
 from itertools import product
