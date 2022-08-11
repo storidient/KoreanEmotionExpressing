@@ -1,41 +1,8 @@
 import re
-from data.rx_codes import chinese_rx, blank_chinese, katakana_middle
-from data.utils import Options
+from data.utils import Options, CleanWord
 from cached_property import cached_property
 from typing import List, Dict, Optional
 
-
-class CleanWord:
-  """Delete unneccessary marks in a word
-
-  Attributes:
-    chinese_rx : the regular expression of Chinese letters
-    blank_chinese : the regular expression of 'blank' in Chinese letters
-    katakana_middle : the regular expression of 'ㆍ' in Japanese(Katakana) letters
-  """
-  def __init__(self):
-    self.chinese_rx = chinese_rx
-    self.blank_chinese = blank_chinese
-    self.katakana_middle = katakana_middle
-  
-  def del_chinese(self, item : str) -> str:
-    """Delete the Chinese letters and empty brackets (e.g. '[]', '()')"""
-    return re.sub('[\[\(][\]\)]', '', self.chinese_rx.sub('', item))
-
-  def del_space(self, item : str) -> str:
-    """Delete unneccessary spaces in a word"""
-    return re.sub(' +', ' ', item.strip())
-  
-  def del_all(self, word : str) -> str:
-    """Delete all the unneccessary marks
-    (e.g. Arabian numbers, under-bar, chinese letters, hyphen, end marks)
-    """
-    without_chinese = self.blank_chinese.sub(' ', self.del_chinese(word))
-    without_underbar = re.sub('_', ' ', without_chinese)
-    without_katakana = self.katakana_middle.sub('ㆍ', without_underbar)    
-    
-    return re.sub('[\.,0-9\-]', '', without_katakana)
- 
       
 class ReviseRep(CleanWord):
   """Revise the representation form of a word
@@ -103,3 +70,26 @@ class ReviseRep(CleanWord):
       options.append(rep)
 
     return rep, options
+
+
+class ReviseDef(CleanWord):
+  def __init__(self):
+    super().__init__()
+  
+  def del_numbering(self, item):
+    """delete numbers with the word representation
+    (e.g. '‘단어01’의 준말')"""
+    targets = re.findall("['‘][가-힣]+[0-9]+[’']", item)
+    for target in targets:
+      without_num = re.sub('[0-9]+', '', target)
+      item = re.sub(target, without_num, item)
+    
+    return re.sub('[\[「][0-9]+[\]」]', '', item)
+  
+  def main(self, item : str) -> str:
+    """Delete all the unneccessary marks in word definition"""
+    without_chinese = self.del_chinese(item)
+    without_roman = self.roman_bracket.sub('', without_chinese)
+    without_numbering = self.del_numbering(without_roman)
+
+    return re.sub('\</?(FL|sub)\>|<DR />', '', without_numbering)
