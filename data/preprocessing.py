@@ -6,7 +6,7 @@ from typing import List, Dict, Optional
 
 
 class CleanWord:
-  """Delete all the unneccessary marks in a word
+  """Delete unneccessary marks in a word
 
   Attributes:
     chinese_rx : the regular expression of Chinese letters
@@ -38,6 +38,12 @@ class CleanWord:
  
       
 class ReviseRep(CleanWord):
+  """Revise the representation form of a word
+  
+  Attributes:
+    save_options: whether to return a list of all the possible forms or not
+                  (e.g. '밥(을) 먹다' -> ['밥 먹다', '밥을 먹다'])
+   """
   def __init__(self, save_options : bool = True):
     super().__init__()
     self.save_options = save_options
