@@ -1,5 +1,6 @@
 import re
 from rx_codes import chinese_rx, blank_chinese, katakana_middle
+from utils import Options
 from cached_property import cached_property
 from typing import List, Dict, Optional
 from itertools import product
@@ -34,47 +35,7 @@ class CleanWord:
     without_katakana = self.katakana_middle.sub('ㆍ', without_underbar)    
     
     return re.sub('[\.,0-9\-]', '', without_katakana)
-
-  
-class Options:
-  """
-  Change the representation form with [/] into a list of all the possible forms
-  
-  Attributes: 
-    input : a representation with [', ']' and '/' (e.g. 밥[빵/국]을 먹다)
-    output : a list of all the possible forms (e.g.['밥을 먹다', '빵을 먹다, '국을 먹다'])
-  """
-  def __init__(self, phrase : str):
-    self.input, self.output = phrase, list()
-    self._build()
-  
-  @cached_property
-  def targets(self):
-    """Returns a range matched with 'OptionOne[OptionTwo/OptionThree]'"""
-    return re.findall('[^ ]*\[[^\]]+\]', self.input)
-
-  @cached_property
-  def options(self):
-    """Returns a list of options"""
-    return list(map(self.split_option, self.targets))
-
-  def split_option(self, target : str) -> List[str]:
-    """Change a string with [] into a list"""
-    items = re.split('[\[\/]', re.sub('\]', '', target))
-    return [x for x in items if len(x.strip(' ')) > 0]
-  
-  def _build(self):
-    all_combination = list(product(*self.options))
-    
-    for option_set in all_combination:
-      possible_form = '' + self.input #copy the original form
-
-      for idx, target in enumerate(self.targets):
-        target = re.sub('\]', '\]', re.sub('\[', '\[', target))
-        possible_form = re.sub(target, option_set[idx], possible_form)
-      
-      self.output.append(possible_form)
-  
+ 
       
 class ReviseRep(CleanWord):
   def __init__(self, save_options : bool = True):
