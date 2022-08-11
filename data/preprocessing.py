@@ -1,6 +1,6 @@
 import re
 from data.rx_codes import chinese_rx, blank_chinese, katakana_middle
-from utils import Options
+from data.utils import Options
 from cached_property import cached_property
 from typing import List, Dict, Optional
 
