@@ -3,6 +3,7 @@ from collections import defaultdict
 from data.utils import Options, CleanWord, FilterWord
 from cached_property import cached_property
 from typing import List, Dict, Optional
+from tqdm import tqdm
 
       
 class ReviseRep(CleanWord):
