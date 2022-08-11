@@ -3,7 +3,7 @@ from rx_codes import chinese_rx, blank_chinese, katakana_middle
 from utils import Options
 from cached_property import cached_property
 from typing import List, Dict, Optional
-from itertools import product
+
 
 class CleanWord:
   """Delete all the unneccessary marks in a word
