@@ -1,5 +1,6 @@
-import re
-from data.utils import Options, CleanWord
+import re, unicodedata
+from collections import defaultdict
+from data.utils import Options, CleanWord, FilterWord
 from cached_property import cached_property
 from typing import List, Dict, Optional
 
@@ -93,3 +94,94 @@ class ReviseDef(CleanWord):
     without_numbering = self.del_numbering(without_roman)
 
     return re.sub('\</?(FL|sub)\>|<DR />', '', without_numbering)
+
+
+class CleanInfo:
+  """
+  Clean word information
+  
+  Attributes:
+    input : a list of dictionaries with word information
+    output : a list of dictionaries with cleaned word information
+    save_options : save all the possible forms of a word
+    allow_old : allow old Korean letters
+    allow_broken : allow broken Korean letters
+    del_overlapped : delete the overlapped words(same representation and definition)
+  """
+  def __init__(self, 
+               input : List[Dict[str, str]], 
+               save_options : bool = True,
+               allow_old : bool = False, 
+               allow_broken : bool = False,
+               del_overlapped : bool = True):
+    
+    self.input = input
+    self._word_clean = ReviseRep(save_options).main
+    self._def_clean = ReviseDef().main
+    self._filter = FilterWord(allow_old, 
+                            allow_broken).main
+    self.output = self._build(del_overlapped)
+  
+  def _get_unit(self, item : Dict[str, str]) -> str:
+    """Revise the word unit"""
+    if item['pos'] == '구' or item['word_unit'] == '관용구':
+      return '구'
+
+    elif item['word_unit'] == '단어':
+      return '어휘'
+
+    else:
+      return item['word_unit']
+
+  def _get_pos(self, item):
+    """Revise the part-of-speech"""
+    if item['pos'] == '품사없음' and '어근' in item['definition']:
+      return '어근'
+
+    elif item['word_unit'] == '구':
+      return '구'
+
+    else:
+      return item['pos']
+  
+  def _get_info(self, item : Dict[str, str]) -> Dict[str,str]:
+    """Revise all the inforamtion about a word"""
+    word, options = self._word_clean(item['word'])
+    item['word'] = word
+
+    if options != None:
+      item['other_forms'] = '&'.join(set(options))
+    
+    item['definition'] = self._def_clean(item['definition'])
+    item['word_unit'] = self._get_unit(item)
+    item['pos'] = self._get_pos(item)
+
+    return item
+  
+  @cached_property
+  def word_zip(self):
+    """Sort and zip all the word informtation to delete overlapped words"""
+    output = defaultdict(list)
+
+    for x in tqdm(self.input):
+      if self._filter(x['word']):
+        word_info = '#%#'.join(
+            sorted([k + '%?%' + v for k,v in self._get_info(x).items() if k != 'source'])
+            )
+        output[word_info].append(x['source'])
+    return output
+
+  def _build(self, del_overlapped):
+    if del_overlapped == True:
+      output = list()
+
+      for word_info, word_source in tqdm(self.word_zip.items()):
+        info_list = [x.split('%?%') for x in word_info.split('#%#')]
+        item_dict = {key : val for [key, val] in info_list}
+        item_dict['source'] = '/'.join(set(word_source))
+        output.append(item_dict)
+
+      return output
+    
+    else:
+      return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
