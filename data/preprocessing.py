@@ -163,9 +163,13 @@ class CleanInfo:
   def unify_same(self, item):
     """Revise the definition of items with same synonym"""
     if item not in self.target.values(): pass
-    else:
-      key = [k for k, v in self.target.items if item in v][0]
-      item['definition'] = '→ ' + key.split('/')[0]
+      
+    elif '→' in item['definition']:
+      item['definition'] = '→ ' + re.sub('→ |[0-9\.]', '', item['definition'])
+
+    elif '⇒' in item['definition']:
+      item['definition'] = '→ ' + re.sub('[‘’]', '', re.findall('‘.*’', item['definition'])[0])
+      
     return item
   
   @cached_property
