@@ -1,6 +1,6 @@
 import re, unicodedata
 from collections import defaultdict
-from data.utils import Options, CleanWord, FilterWord
+from data.utils import Options, CleanWord, FilterWord, wrap_same
 from cached_property import cached_property
 from typing import List, Dict, Optional
 from tqdm import tqdm
@@ -159,31 +159,39 @@ class CleanInfo:
     item['pos'] = self._get_pos(item)
 
     return item
+
+  def unify_same(self, item):
+    """Revise the definition of items with same synonym"""
+    if item not in self.target.values(): pass
+    else:
+      key = [k for k, v in self.target.items if item in v][0]
+      item['definition'] = '→ ' + key.split('/')[0]
+    return item
   
   @cached_property
-  def word_zip(self):
+  def wrap_overlap(self):
     """Sort and zip all the word informtation to delete overlapped words"""
     output = defaultdict(list)
-
-    for x in tqdm(self.input):
-      if self._filter(x['word']):
-        word_info = '#%#'.join(
-            sorted([k + '%?%' + v for k,v in self._get_info(x).items() if k != 'source'])
-            )
-        output[word_info].append(x['source'])
+    for item in tqdm(self.revised):
+      word_info = '#%#'.join(sorted([k + '%?%' + v for k,v in item.items() if k != 'source']))
+      output[word_info].append(x['source'])
     return output
 
   def _build(self, del_overlapped):
-    if del_overlapped == True:
+    output = [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
+
+    if del_overlapped == False:
+      return output
+
+    else:
+      self.target = wrap_same(output)
+      self.revised = list(map(lambda x : self.unify_same(x), tqdm(output)))
       output = list()
 
-      for word_info, word_source in tqdm(self.word_zip.items()):
+      for word_info, word_source in tqdm(self.wrap_overlap.items()):
         info_list = [x.split('%?%') for x in word_info.split('#%#')]
         item_dict = {key : val for [key, val] in info_list}
         item_dict['source'] = '/'.join(set(word_source))
         output.append(item_dict)
 
       return output
-    
-    else:
-      return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
