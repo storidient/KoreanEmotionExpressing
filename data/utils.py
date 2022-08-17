@@ -112,3 +112,23 @@ class FilterWord:
         return False
 
     return True
+
+def wrap_same(item_list):
+  """Gather words with the same representation and meaning"""
+  output = defaultdict(list)
+
+  for item in item_list:
+    if '→' in item['definition']:
+      key = re.sub('→ |[0-9\.]', '', item['definition'])
+      key += '/' + item['word']
+      output[key].append(item)
+
+    elif '⇒' in item['definition']:
+      key = re.findall('‘.*’', item['definition'])
+
+      if len(key) > 0:
+        key = re.sub('[‘’]', '', key[0])
+        key += '/' + item['word']
+        output[key].append(item)
+  
+  return {key : val for key, val in output.items() if len(val) > 1}
