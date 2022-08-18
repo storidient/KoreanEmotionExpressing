@@ -86,7 +86,6 @@ class ReviseDef(CleanWord):
       without_num = re.sub('[0-9]', '', target)
       
       if without_num != target:
-        print(item, target, without_num)
         item = re.sub(target, without_num, item)
     
     return re.sub('[\[「][0-9]*[\]」]', '', item)
