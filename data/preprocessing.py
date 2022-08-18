@@ -1,6 +1,6 @@
 import re, unicodedata
 from collections import defaultdict
-from data.utils import Options, CleanWord, FilterWord, wrap_same
+from data.utils import Options, CleanWord, FilterWord
 from cached_property import cached_property
 from typing import List, Dict, Optional
 from tqdm import tqdm
@@ -73,7 +73,6 @@ class ReviseRep(CleanWord):
 
     return rep, options
 
-
 class ReviseDef(CleanWord):
   def __init__(self):
     super().__init__()
@@ -88,12 +87,25 @@ class ReviseDef(CleanWord):
     
     return re.sub('[\[「][0-9]+[\]」]', '', item)
   
+  def leave_synonym(self, item):
+    """If the definition of word consists of synonym, leave the synonym and delete others"""
+    if '→' in item:
+      item = re.sub('→ |[0-9\.]', '', item)
+
+    elif '⇒' in item:
+      synonym_list = re.findall('‘.*’', item)
+      if len(output) > 0:
+        item = re.sub('[‘’]', '', synonym_list[0])
+    
+    return item
+  
   def main(self, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
     without_chinese = self.del_chinese(item)
     without_roman = self.roman_bracket.sub('', without_chinese)
     without_numbering = self.del_numbering(without_roman)
-    output = re.sub('\</?(FL|sub)\>|<DR />|<sp_no>[0-9]*</sp_no>', '', without_numbering)
+    without_marks = re.sub('\</?(FL|sub)\>|<DR />|<sp_no>[0-9]*</sp_no>', '', without_numbering)
+    output = self.leave_synonym(without_marks)
 
     return self.del_space(output.split('<동의 관용구>')[0])
 
@@ -159,39 +171,24 @@ class CleanInfo:
     item['pos'] = self._get_pos(item)
 
     return item
-
-  def unify_same(self, item):
-    """Revise the definition of items with same synonym"""
-    if item not in self.target.values(): pass
-      
-    elif '→' in item['definition']:
-      item['definition'] = '→ ' + re.sub('→ |[0-9\.]', '', item['definition'])
-
-    elif '⇒' in item['definition']:
-      item['definition'] = '→ ' + re.sub('[‘’]', '', re.findall('‘.*’', item['definition'])[0])
-      
-    return item
   
   @cached_property
   def wrap_overlap(self):
     """Sort and zip all the word informtation to delete overlapped words"""
     output = defaultdict(list)
-    for item in tqdm(self.revised):
-      word_info = '#%#'.join(sorted([k + '%?%' + v for k,v in item.items() if k != 'source']))
-      output[word_info].append(x['source'])
+    for x in tqdm(self.input):
+      if self._filter(x['word']):
+        word_info = '#%#'.join(sorted([k + '%?%' + v for k,v in self._get_info(x).items() if k != 'source']))
+        output[word_info].append(x['source'])
+            
     return output
 
   def _build(self, del_overlapped):
-    output = [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
-
-    if del_overlapped == False:
-      return output
+    if del_overlapped == True:
+      return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
     else:
-      self.target = wrap_same(output)
-      self.revised = list(map(lambda x : self.unify_same(x), tqdm(output)))
       output = list()
-
       for word_info, word_source in tqdm(self.wrap_overlap.items()):
         info_list = [x.split('%?%') for x in word_info.split('#%#')]
         item_dict = {key : val for [key, val] in info_list}
