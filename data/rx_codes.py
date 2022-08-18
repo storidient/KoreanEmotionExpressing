@@ -17,7 +17,8 @@ chinese_unicode = [('\u31c0', '\u31ef'),
                    ('\u3300', '\u33ff'),
                    ('\u3400', '\u4dbf'),
                    ('\u4dc0', '\u4dff'),
-                   ('\u4e00', '\u9fff')]
+                   ('\u4e00', '\u9fff'),
+                   ('\uf900', '\ufaff')]
 
 roman_num = [('\u2160', '\u217f')]
 
