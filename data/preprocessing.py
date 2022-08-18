@@ -94,7 +94,7 @@ class ReviseDef(CleanWord):
 
     elif '⇒' in item:
       synonym_list = re.findall('‘.*’', item)
-      if len(output) > 0:
+      if len(synonym_list) > 0:
         item = re.sub('[‘’]', '', synonym_list[0])
     
     return item
