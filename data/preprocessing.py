@@ -80,10 +80,13 @@ class ReviseDef(CleanWord):
   def del_numbering(self, item : str) -> str:
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
-    targets = re.findall("['‘].*[0-9]+.*[’']", item)
+    targets = re.findall("['‘].*[’']", item)
+      
     for target in targets:
       without_num = re.sub('[0-9]', '', target)
-      item = re.sub(target, without_num, item)
+      
+      if without_num != target:
+        item = re.sub(target, without_num, item)
     
     return re.sub('[\[「][0-9]*[\]」]', '', item)
   
