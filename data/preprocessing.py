@@ -94,12 +94,12 @@ class ReviseDef(CleanWord):
   def leave_synonym(self, item : str) -> str:
     """If the definition of word consists of synonym, leave the synonym and delete others"""
     if '→' in item:
-      item = re.sub('→ |[0-9\.]', '', item)
+      item = '→ ' + re.sub('→ |[0-9\.]', '', item)
 
     elif '⇒' in item:
       synonym_list = re.findall('‘.*’', item.split('⇒')[-1])
       if len(synonym_list) > 0:
-        item = re.sub('[‘’]', '', synonym_list[0])
+        item = '→ ' + re.sub('[‘’]', '', synonym_list[0])
     
     return item
   
