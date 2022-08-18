@@ -85,7 +85,7 @@ class ReviseDef(CleanWord):
       without_num = re.sub('[0-9]', '', target)
       item = re.sub(target, without_num, item)
     
-    return re.sub('[\[「][0-9]+[\]」]', '', item)
+    return re.sub('[\[「][0-9]*[\]」]', '', item)
   
   def leave_synonym(self, item : str) -> str:
     """If the definition of word consists of synonym, leave the synonym and delete others"""
