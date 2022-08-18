@@ -77,7 +77,7 @@ class ReviseDef(CleanWord):
   def __init__(self):
     super().__init__()
   
-  def del_numbering(self, item):
+  def del_numbering(self, item : str) -> str:
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
     targets = re.findall("['‘][가-힣]+[0-9]+[’']", item)
@@ -87,7 +87,7 @@ class ReviseDef(CleanWord):
     
     return re.sub('[\[「][0-9]+[\]」]', '', item)
   
-  def leave_synonym(self, item):
+  def leave_synonym(self, item : str) -> str:
     """If the definition of word consists of synonym, leave the synonym and delete others"""
     if '→' in item:
       item = re.sub('→ |[0-9\.]', '', item)
@@ -183,7 +183,7 @@ class CleanInfo:
             
     return output
 
-  def _build(self, del_overlapped):
+  def _build(self, del_overlapped : bool) -> List[Dict[str,str]]:
     if del_overlapped == True:
       return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
