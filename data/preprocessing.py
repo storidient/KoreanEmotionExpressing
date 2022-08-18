@@ -107,7 +107,8 @@ class ReviseDef(CleanWord):
     """Delete all the unneccessary marks in word definition"""
     without_chinese = self.del_chinese(item)
     without_roman = self.roman_bracket.sub('', without_chinese)
-    without_numbering = self.del_numbering(without_roman)
+    without_source = re.sub('<img style.*>', '', without_roman)
+    without_numbering = self.del_numbering(without_source)
     without_marks = re.sub('\</?(FL|sub)\>|<DR />|<(sp|each_sense)_no>.*</(sp|each_sense)_no>', '', without_numbering)
     output = self.leave_synonym(without_marks)
 
