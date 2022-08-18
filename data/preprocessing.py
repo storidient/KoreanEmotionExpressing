@@ -82,7 +82,7 @@ class ReviseDef(CleanWord):
     (e.g. '‘단어01’의 준말')"""
     targets = re.findall("['‘][가-힣]+[0-9]+[’']", item)
     for target in targets:
-      without_num = re.sub('[0-9]+', '', target)
+      without_num = re.sub('[0-9]', '', target)
       item = re.sub(target, without_num, item)
     
     if len(targets) > 0:
@@ -107,7 +107,7 @@ class ReviseDef(CleanWord):
     without_chinese = self.del_chinese(item)
     without_roman = self.roman_bracket.sub('', without_chinese)
     without_numbering = self.del_numbering(without_roman)
-    without_marks = re.sub('\</?(FL|sub)\>|<DR />|<sp_no>[0-9]*</sp_no>', '', without_numbering)
+    without_marks = re.sub('\</?(FL|sub)\>|<DR />|<(sp|each_sense)_no>.*</(sp|each_sense)_no>', '', without_numbering)
     output = self.leave_synonym(without_marks)
 
     return self.del_space(output.split('<동의 관용구>')[0])
