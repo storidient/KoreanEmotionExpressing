@@ -39,15 +39,12 @@ class OpenKorean:
   def get_info(self, item) -> Dict[str, str]:
     pos = item['senseinfo']['pos'] if 'pos' in item['senseinfo'].keys() else '품사 없음'
 
-    if ('형용사' not in pos) and ('동사' not in pos):
-      conjugation = '없음'
-
-    elif 'conju_info' not in item['wordinfo'].keys():
-      conjugation = 'Blank'
-    
-    else:
+    if ('형용사' in pos or '동사' in pos) and ('conju_info' in item['wordinfo'].keys()):
       conjugation = extract_conjugation(item['wordinfo']['conju_info'])
-  
+
+    else:
+      conjugation = list()
+    
     return {'word' : item['wordinfo']['word'],
             'word_unit' : item['wordinfo']['word_unit'],
             'conjugation' : conjugation,
@@ -85,14 +82,10 @@ class StandardKorean:
     item_pattern = item_pos[0]['comm_pattern_info']
     pos = item_pos[0]['pos']
 
-    if ('형용사' not in pos) and ('동사' not in pos):
-      conjugation = '없음'
-
-    elif 'conju_info' not in item.keys():
-      conjugation = 'Blank'
-
-    else:
+    if ('형용사' in pos or '동사' in pos) and ('conju_info' in item.keys()):
       conjugation = extract_conjugation(item['conju_info'])
+    else:
+      conjugation = list()
 
     return [{'word' : item['word'],
              'word_unit' : item['word_unit'],
