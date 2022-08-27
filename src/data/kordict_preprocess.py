@@ -185,7 +185,7 @@ class CleanInfo:
       if self._filter(x['word']):
         word_info = '#%#'.join(sorted([k + '%?%' + v for k,v in self._get_info(x).items() if k not in ['source', 'conjugation']]))
         source[word_info].append(x['source'])
-        conjugation[x['word']] += x['conjugation']
+        conjugation[x['word'] + x['definition']] += x['conjugation']
 
     return source, conjugation
 
@@ -201,7 +201,7 @@ class CleanInfo:
         info_list = [x.split('%?%') for x in word_info.split('#%#')]
         item_dict = {key : val for [key, val] in info_list}
         item_dict['source'] = '/'.join(set(word_source))
-        item_dict['conjugation'] = '/'.join(set(conjugation[item_dict['word']]))
+        item_dict['conjugation'] = '/'.join(set(conjugation[item_dict['word'] + item_dict['definition']]))
         output.append(item_dict)
 
       return output
