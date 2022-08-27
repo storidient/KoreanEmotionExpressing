@@ -5,9 +5,7 @@ from typing import Dict, List
 
 def extract_conjugation(item : List[Dict[str, str]]) -> List[str]:
   """Return conjugation forms of a word"""
-  conjugation = list(map(lambda x : x['conjugation_info']['conjugation'], item))
-  conjugation += [x['abbreviation_info']['abbreviation'] 
-                  for x in item if 'abbreviation_info' in x.keys()]
+  conjugation = [x['abbreviation_info']['abbreviation'] if 'abbreviation_info' in x.keys() else x['conjugation_info']['conjugation'] for x in item ]
   avoid_zero = list(filter(lambda x: len(x) > 0, 
                             list(map(lambda x: x.strip(' '), conjugation))
                             ))
