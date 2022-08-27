@@ -65,6 +65,7 @@ class StandardKorean:
 
     return [{'word' : item['word'],
              'word_unit' : item['word_unit'],
+             'conjugation' : item['conju_info'] if 'conju_info' in item.keys() else None,
              'pos' : item_pos[0]['pos'],
              'definition': sense_info['definition'],
              'type' : '일반어',
