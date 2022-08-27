@@ -183,7 +183,7 @@ class CleanInfo:
     output = defaultdict(list)
     for x in tqdm(self.input):
       if self._filter(x['word']):
-        word_info = '#%#'.join(sorted([k + '%?%' + v for k,v in self._get_info(x).items() if k != 'source']))
+        word_info = '#%#'.join(sorted([k + '%?%' + v for k,v in self._get_info(x).items() if k not in ['source', 'conjugation']]))
         output[word_info].append(x['source'])
             
     return output
