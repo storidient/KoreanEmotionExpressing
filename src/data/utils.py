@@ -101,7 +101,7 @@ class FilterWord:
     if self.allow_broken == False:
       self.broken_kor_rx = re.compile('^[ㄱ-ㅎㅏ-ㅣ]')
 
-  def main(self, item : str) -> bool:
+  def run(self, item : str) -> bool:
     item = unicodedata.normalize('NFC', item)
 
     if self.allow_old == False:
