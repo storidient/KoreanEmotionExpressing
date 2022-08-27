@@ -1,6 +1,6 @@
 import re, unicodedata
 from collections import defaultdict
-from data.utils import Options, CleanWord, FilterWord
+from src.data.utils import Options, CleanWord, FilterWord
 from cached_property import cached_property
 from typing import List, Dict, Optional
 from tqdm import tqdm
@@ -52,7 +52,7 @@ class ReviseRep(CleanWord):
   
     return rep, options
 
-  def main(self, word : str) -> str:
+  def run(self, word : str) -> str:
     """revise word represetation form with all the rules"""
     rep = self.del_all(word)
     options = list() if self.save_options == True else None
@@ -103,7 +103,7 @@ class ReviseDef(CleanWord):
     
     return item
   
-  def main(self, item : str) -> str:
+  def run(self, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
     without_chinese = self.del_chinese(item)
     without_roman = self.roman_bracket.sub('', without_chinese)
@@ -135,10 +135,10 @@ class CleanInfo:
                del_overlapped : bool = True):
     
     self.input = input
-    self._word_clean = ReviseRep(save_options).main
-    self._def_clean = ReviseDef().main
+    self._word_clean = ReviseRep(save_options).run
+    self._def_clean = ReviseDef().run
     self._filter = FilterWord(allow_old, 
-                            allow_broken).main
+                            allow_broken).run
     self.output = self._build(del_overlapped)
   
   def _get_unit(self, item : Dict[str, str]) -> str:
@@ -177,27 +177,31 @@ class CleanInfo:
 
     return item
   
-  @cached_property
   def wrap_overlap(self):
     """Sort and zip all the word informtation to delete overlapped words"""
-    output = defaultdict(list)
+    source, conjugation = defaultdict(list), defaultdict(list)
+
     for x in tqdm(self.input):
       if self._filter(x['word']):
         word_info = '#%#'.join(sorted([k + '%?%' + v for k,v in self._get_info(x).items() if k not in ['source', 'conjugation']]))
-        output[word_info].append(x['source'])
-            
-    return output
+        source[word_info].append(x['source'])
+        conjugation[x['word']] += x['conjugation']
+
+    return source, conjugation
 
   def _build(self, del_overlapped : bool) -> List[Dict[str,str]]:
     if del_overlapped == False:
       return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
     else:
+      source, conjugation = self.wrap_overlap()
+
       output = list()
-      for word_info, word_source in tqdm(self.wrap_overlap.items()):
+      for word_info, word_source in tqdm(source.items()):
         info_list = [x.split('%?%') for x in word_info.split('#%#')]
         item_dict = {key : val for [key, val] in info_list}
         item_dict['source'] = '/'.join(set(word_source))
+        item_dict['conjugation'] = '/'.join(set(conjugation[item_dict['word']]))
         output.append(item_dict)
 
       return output
