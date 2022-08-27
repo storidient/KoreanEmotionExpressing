@@ -11,7 +11,7 @@ def extract_conjugation(item : List[Dict[str, str]]) -> List[str]:
   avoid_zero = list(filter(lambda x: len(x) > 0, 
                             list(map(lambda x: x.strip(' '), conjugation))
                             ))
-  return list(filter(lambda x: x[-1] not in ['니', '오', '는', '지', '고'], avoid_zero))
+  return list(filter(lambda x: x[-1] not in ['니', '오', '는', '지', '고', '소'], avoid_zero))
 
 
 class OpenKorean:
