@@ -28,6 +28,7 @@ class OpenKorean:
   def get_info(self, item) -> Dict[str, str]:
     return {'word' : item['wordinfo']['word'],
             'word_unit' : item['wordinfo']['word_unit'],
+            'conjugation' : item['wordinfo']['conju_info'] if 'conju_info' in item['wordinfo'].keys() else None,
             'definition' : item['senseinfo']['definition'],
             'type' : item['senseinfo']['type'],
             'pos' : item['senseinfo']['pos'] if 'pos' in item['senseinfo'].keys() else '품사 없음',
