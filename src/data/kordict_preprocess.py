@@ -101,6 +101,11 @@ class ReviseDef(CleanWord):
       if len(synonym_list) > 0:
         item = '→ ' + re.sub('[‘’]', '', synonym_list[0])
     
+    elif '준말' in item:
+      synonym_list = re.findall('‘.*’', item)
+      if len(synonym_list) > 0:
+        item = '→ ' + re.sub('[‘’]', '', synonym_list[0])
+      
     return item
   
   def run(self, item : str) -> str:
