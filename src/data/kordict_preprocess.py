@@ -206,7 +206,7 @@ class CleanInfo:
         info_list = [x.split('%?%') for x in word_info.split('#%#')]
         item_dict = {key : val for [key, val] in info_list}
         item_dict['source'] = '/'.join(set(word_source))
-        item_dict['conjugation'] = '/'.join(set(conjugation[item_dict['word']]))
+        item_dict['conjugation'] = list(set(conjugation[item_dict['word']]))
         output.append(item_dict)
 
       return output
