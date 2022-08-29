@@ -2,7 +2,7 @@ import re, unicodedata
 from collections import defaultdict
 from src.data.utils import Options, CleanWord, FilterWord
 from cached_property import cached_property
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 from tqdm import tqdm
 
       
