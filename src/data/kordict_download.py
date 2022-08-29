@@ -51,6 +51,9 @@ class OpenKorean:
             'type' : item['senseinfo']['type'],
             'pos' : pos,
             'source' : 'OKD'}
+  
+  def __repre__(self):
+    return 'Download %d items from Open Korean Dictionary' % (len(self.output))
 
   
 class StandardKorean:
@@ -94,3 +97,6 @@ class StandardKorean:
              'definition': sense_info['definition'],
              'type' : '일반어',
              'source' : 'SKD'} for sense_info in item_pattern[0]['sense_info']]
+  
+  def __repre__(self):
+    return 'Download %d items from Standard Korean Dictionary' % (len(self.output))
