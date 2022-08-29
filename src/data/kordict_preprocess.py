@@ -206,7 +206,6 @@ class CleanInfo:
     output = defaultdict(list)
     for x in input_list:
       key = x['word'] + '#%#' + x['definition'] if with_def == True else x['word']
-      print(key)
       output[key].append(x)
     return output
   
