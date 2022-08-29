@@ -204,7 +204,7 @@ class CleanInfo:
       return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
     else:
-      source, pos, conjugation, pattern = self.wrap_overlap()
+      source, pos, conjugation, pattern, other_forms = self.wrap_overlap()
 
       output = list()
       for word_info, word_source in tqdm(source.items()):
