@@ -2,7 +2,7 @@ import re, unicodedata
 from collections import defaultdict
 from src.data.utils import Options, CleanWord, FilterWord
 from cached_property import cached_property
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, Union
 from tqdm import tqdm
 
       
@@ -135,7 +135,7 @@ class CleanInfo:
     del_overlapped : delete the overlapped words(same representation and definition)
   """
   def __init__(self, 
-               input : List[Dict[str, str]], 
+               input : List[Dict[str, Union[str, List[str]]]], 
                save_options : bool = True,
                allow_old : bool = False, 
                allow_broken : bool = False,
@@ -148,7 +148,7 @@ class CleanInfo:
                             allow_broken).run
     self.output = self._build(del_overlapped)
   
-  def _get_unit(self, item : Dict[str, str]) -> str:
+  def _get_unit(self, item : Dict[str, Union[str, List[str]]]) -> str:
     """Revise the word unit"""
     if item['pos'] == '구' or item['word_unit'] in ['관용구', '속담']:
       return '구'
@@ -170,7 +170,7 @@ class CleanInfo:
     else:
       return item['pos']
   
-  def _get_info(self, item : Dict[str, str]) -> Dict[str,str]:
+  def _get_info(self, item : Dict[str, Union[str, List[str]]]) -> Dict[str, Union[str, List[str]]]:
     """Revise all the inforamtion about a word"""
     word, options = self._word_clean(item['word'])
     item['word'] = word
@@ -198,7 +198,7 @@ class CleanInfo:
 
     return source, pos, conjugation, pattern
 
-  def _build(self, del_overlapped : bool) -> List[Dict[str,str]]:
+  def _build(self, del_overlapped : bool) -> List[Dict[str, Union[str, List[str]]]]:
     if del_overlapped == False:
       return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
