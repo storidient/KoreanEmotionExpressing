@@ -186,25 +186,27 @@ class CleanInfo:
   
   def wrap_overlap(self) -> Dict[str, List[str]]:
     """Sort and zip all the word informtation to delete overlapped words"""
-    source, pos, conjugation, pattern, other_forms = defaultdict(list), defaultdict(list), defaultdict(list), defaultdict(list), defaultdict(list)
-
+    source, pos, conjugation, pattern = defaultdict(list), defaultdict(list), defaultdict(list), defaultdict(list)
+      
     for x in tqdm(self.input):
       if self._filter(x['word']):
-        word_info = '#%#'.join([x['word'], x['definition']])
-        other_forms[word_info].append(x['other_forms'])
+        word_info = '#%#'.join([k + '%?%' + v for k, v in x.items() if k not in ['source',
+                                                                                 'pos',
+                                                                                 'conjugation',
+                                                                                 'pattern']])
         source[word_info].append(x['source'])
         pos[word_info].append(x['pos'])
         conjugation[word_info] += x['conjugation']
         pattern[word_info].append(x['pattern'])
 
-    return source, pos, conjugation, pattern, other_forms
+    return source, pos, conjugation, pattern
 
   def _build(self, del_overlapped : bool) -> List[Dict[str, str]]:
     if del_overlapped == False:
       return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
     else:
-      source, pos, conjugation, pattern, other_forms = self.wrap_overlap()
+      source, pos, conjugation, pattern = self.wrap_overlap()
 
       output = list()
       for word_info, word_source in tqdm(source.items()):
@@ -212,7 +214,6 @@ class CleanInfo:
         item_dict = {key : val for [key, val] in info_list}
         item_dict['source'] = '/'.join(set(word_source))
         item_dict['pos'] = '/'.join(set(pos[word_info]))
-        item_dict['other_forms'] = '/'.join(set(other_forms[word_info]))
         item_dict['conjugation'] = '/'.join(set(conjugation[word_info]))
         item_dict['pattern'] = '/'.join(set(pattern[word_info]))
         output.append(item_dict)
