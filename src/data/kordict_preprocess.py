@@ -183,42 +183,81 @@ class CleanInfo:
     item['pos'] = self._get_pos(item)
 
     return item
+
+  def list2str(self, input):
+    """Split a string in a list and delete the overlapped items """
+    output = np.concatenate([x.split('/') for x in input])
+    without_zero = [x.strip(' ') for x in output if len(x. strip(' ')) > 0]
+    return '/'.join(set(without_zero))
   
-  def wrap_overlap(self) -> Dict[str, List[str]]:
+  def _gen_dict(self, items : List[Dict[str, str]]) -> Dict[str, str]:
+    """Sum the values in a list and generate a dictionary"""
+    output = {'word' : items[0]}
+    output.update(
+        {key : self.list2str([_[key] for _ in items]) 
+        for key in items[0].keys() if key not in ['definition','word']})
+    return output
+
+  def _wrap(self, 
+            input_list : List[Dict[str, str]],
+            with_def : bool = False) -> Dict[str, List[str]]:
     """Sort and zip all the word informtation to delete overlapped words"""
-    source, pos, conjugation, pattern = defaultdict(list), defaultdict(list), defaultdict(list), defaultdict(list)
-      
-    for x in tqdm(self.input):
-      if self._filter(x['word']):
-        word_info = '#%#'.join(sorted([k + '%?%' + v for k,v in self._get_info(x).items() if k not in ['source', 
-                                                                                                       'conjugation', 
-                                                                                                       'pattern', 
-                                                                                                       'pos']]))
-        source[word_info].append(x['source'])
-        pos[word_info].append(x['pos'])
-        conjugation[word_info] += x['conjugation']
-        pattern[word_info].append(x['pattern'])
+    output = defaultdict(list)  
+    for x in tqdm(input_list):
+      key = '#%#'.join([x['word'], x['definition']]) if with_def == True else x['word']
+      output[key].append(x)
 
-    return source, pos, conjugation, pattern
+    return output
+  
+  def _del_item(self, items : List[Dict[str, str]]) -> List[Dict[str, str]]:
+    """Delete overlapped items in a list"""
+    def_list = [_['definition'] for _ in items]
 
-  def _build(self, del_overlapped : bool) -> List[Dict[str, str]]:
-    if del_overlapped == False:
-      return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
+    if len(set([re.sub(' ', '', _) for _ in def_list])) == 1:#same but different in spacing
+      new_dict = self._gen_dict(items)
+      new_dict['definition'] =  items[0]['definition']
+      return [new_dict]
+    
+    elif def_list[0] in def_list[-1]: # B includes A
+      new_dict = self._gen_dict(items)
+      new_dict['definition'] =  items[-1]['definition']
+      return [new_dict]
+
+    elif def_list[-1] in def_list[0]: # A includes B
+      new_dict = self._gen_dict(items)
+      new_dict['definition'] =  items[0]['definition']
+      return [new_dict]
+
+    elif len(set(def_list[0].split(' ')) - set(def_list[0].split(' '))) < 2: #one word different
+      new_dict = self._gen_dict(items)
+      new_dict['definition'] = '/'.join(def_list)  
+      return [new_dict]
 
     else:
-      source, pos, conjugation, pattern = self.wrap_overlap()
+      return items
 
-      output = list()
-      for word_info, word_source in tqdm(source.items()):
-        info_list = [x.split('%?%') for x in word_info.split('#%#')]
-        item_dict = {key : val for [key, val] in info_list}
-        item_dict['source'] = '/'.join(set(word_source))
-        item_dict['pos'] = '/'.join(set(pos[word_info]))
-        item_dict['conjugation'] = '/'.join(set(conjugation[word_info]))
-        item_dict['pattern'] = '/'.join(set(pattern[word_info]))
-        output.append(item_dict)
+  def _build(self, del_overlapped : bool) -> List[Dict[str, str]]:
+    output = [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
+    if del_overlapped == True:
       return output
+
+    else:
+      del_same = list()
+      for key, items in tqdm(self._wrap(output, True).items()):
+        item_dict = self._gen_dict(items)
+        word, definition = key.split('#%#')
+        item_dict.update({'word' : word, 'definition' : definition})
+        del_same.append(item_dict)
+      
+      del_similar = list()
+      for key, items in tqdm(self._wrap(del_same).items()):
+        source = [_['source'] for _ in items]
+        if source.count('OKD') == 1 and source.count('SKD') == 1 and len(source) == 2:
+          items = self._del_item(word, items)
+      
+        del_similar += items
+      return del_similar
 
   def __getitem__(self, idx):
       return self.output[idx]
