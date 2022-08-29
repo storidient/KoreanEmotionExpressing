@@ -185,7 +185,7 @@ class CleanInfo:
 
     return item
 
-  def list2str(self, input : List[Dict[str, str]]) -> str:
+  def _list2str(self, input : List[Dict[str, str]]) -> str:
     """Split a string in a list and delete the overlapped items """
     output = np.concatenate([x.split('/') for x in input])
     without_zero = [x.strip(' ') for x in output if len(x. strip(' ')) > 0]
@@ -193,9 +193,9 @@ class CleanInfo:
   
   def _gen_dict(self, items : List[Dict[str, str]]) -> Dict[str, str]:
     """Sum the values in a list and generate a dictionary"""
-    output = {'word' : items[0]}
+    output = {'word' : items[0]['word']}
     output.update(
-        {key : self.list2str([_[key] for _ in items]) for key in items[0].keys() if key not in ['definition','word']}
+        {key : self._list2str([_[key] for _ in items]) for key in items[0].keys() if key not in ['definition','word']}
     )
     return output
 
@@ -261,3 +261,6 @@ class CleanInfo:
 
   def __getitem__(self, idx):
       return self.output[idx]
+  
+  def __len__(self):
+      return len(self.output)
