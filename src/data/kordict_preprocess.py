@@ -218,5 +218,5 @@ class CleanInfo:
 
       return output
 
-  def __getitem(self, idx):
+  def __getitem__(self, idx):
       return self.output[idx]
