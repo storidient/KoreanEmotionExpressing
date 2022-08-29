@@ -57,7 +57,6 @@ class OpenKorean:
 class StandardKorean:
   """Get word information from a json file downloaded from Standard Korean Dictionary
   (https://stdict.korean.go.kr/main/main.do)
-
   Attributes:
     path : a path of json file
     output : a list of dictionaries with word information
@@ -81,6 +80,7 @@ class StandardKorean:
     item_pos = item['pos_info']
     item_pattern = item_pos[0]['comm_pattern_info']
     pos = item_pos[0]['pos']
+    pattern = item_pattern[0]['pattern_info']['pattern'] if 'pattern_info' in item_pattern[0].keys() else '없음'
 
     if ('형용사' in pos or '동사' in pos) and ('conju_info' in item.keys()):
       conjugation = extract_conjugation(item['conju_info'])
@@ -89,6 +89,7 @@ class StandardKorean:
 
     return [{'word' : item['word'],
              'word_unit' : item['word_unit'],
+             'pattern' : pattern,
              'conjugation' : conjugation,
              'pos' : pos,
              'definition': sense_info['definition'],
