@@ -149,7 +149,7 @@ class CleanInfo:
   
   def _get_unit(self, item : Dict[str, str]) -> str:
     """Revise the word unit"""
-    if item['pos'] == '구' or item['word_unit'] == '관용구':
+    if item['pos'] == '구' or item['word_unit'] in ['관용구', '속담']:
       return '구'
 
     elif item['word_unit'] == '단어':
