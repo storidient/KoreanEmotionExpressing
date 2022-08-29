@@ -250,10 +250,8 @@ class CleanInfo:
         item_dict = self._gen_dict(items)
         item_dict['definition'] = definition
         del_same.append(item_dict)
-      print(del_same[0])
-      
-      similar_sorted = self._wrap(del_same)
-      for key, items in tqdm(similar_sorted.items()):
+
+      for key, items in tqdm(self._wrap(del_same).items()):
         source = [_['source'] for _ in items]
         result = self._del_item(word, items) if source.count('OKD') == 1 and source.count('SKD') == 1 and len(source) == 2 else items
         del_similar += result
