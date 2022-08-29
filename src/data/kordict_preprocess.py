@@ -238,7 +238,7 @@ class CleanInfo:
   def _build(self, del_overlapped : bool) -> List[Dict[str, str]]:
     output = [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
-    if del_overlapped == True:
+    if del_overlapped == False:
       return output
 
     else:
