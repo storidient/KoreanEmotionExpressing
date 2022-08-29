@@ -148,7 +148,7 @@ class CleanInfo:
                             allow_broken).run
     self.output = self._build(del_overlapped)
   
-  def _get_unit(self, item : Dict[str, Union[str, List[str]]]) -> str:
+  def _get_unit(self, item : Dict[str, str]) -> str:
     """Revise the word unit"""
     if item['pos'] == '구' or item['word_unit'] in ['관용구', '속담']:
       return '구'
@@ -159,7 +159,7 @@ class CleanInfo:
     else:
       return item['word_unit']
 
-  def _get_pos(self, item : Dict[str, Union[str, List[str]]]) -> str:
+  def _get_pos(self, item : Dict[str, str]) -> str:
     """Revise the part-of-speech"""
     if item['pos'] == '품사없음' and '어근' in item['definition']:
       return '어근'
@@ -170,7 +170,7 @@ class CleanInfo:
     else:
       return item['pos']
   
-  def _get_info(self, item : Dict[str, Union[str, List[str]]]) -> Dict[str, Union[str, List[str]]]:
+  def _get_info(self, item : Dict[str, str]) -> Dict[str, str]:
     """Revise all the inforamtion about a word"""
     word, options = self._word_clean(item['word'])
     item['word'] = word
@@ -184,7 +184,7 @@ class CleanInfo:
 
     return item
 
-  def list2str(self, input):
+  def list2str(self, input : List[Dict[str, str]]) -> str:
     """Split a string in a list and delete the overlapped items """
     output = np.concatenate([x.split('/') for x in input])
     without_zero = [x.strip(' ') for x in output if len(x. strip(' ')) > 0]
@@ -200,13 +200,12 @@ class CleanInfo:
 
   def _wrap(self, 
             input_list : List[Dict[str, str]],
-            with_def : bool = False) -> Dict[str, List[str]]:
+            with_def : bool = False) -> Dict[str, List[Dict[str, str]]]:
     """Sort and zip all the word informtation to delete overlapped words"""
     output = defaultdict(list)  
     for x in tqdm(input_list):
       key = '#%#'.join([x['word'], x['definition']]) if with_def == True else x['word']
       output[key].append(x)
-
     return output
   
   def _del_item(self, items : List[Dict[str, str]]) -> List[Dict[str, str]]:
@@ -255,7 +254,7 @@ class CleanInfo:
         source = [_['source'] for _ in items]
         if source.count('OKD') == 1 and source.count('SKD') == 1 and len(source) == 2:
           items = self._del_item(word, items)
-      
+   
         del_similar += items
       return del_similar
 
