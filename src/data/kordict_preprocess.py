@@ -253,7 +253,7 @@ class CleanInfo:
 
       for key, items in tqdm(self._wrap(del_same).items()):
         source = [_['source'] for _ in items]
-        result = self._del_item(word, items) if source.count('OKD') == 1 and source.count('SKD') == 1 and len(source) == 2 else items
+        result = self._del_item(items) if source.count('OKD') == 1 and source.count('SKD') == 1 and len(source) == 2 else items
         del_similar += result
       return del_similar
 
