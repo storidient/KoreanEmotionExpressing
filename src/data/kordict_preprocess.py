@@ -1,6 +1,6 @@
 import re, unicodedata
 from collections import defaultdict
-from src.data.utils import Options, CleanWord, FilterWord
+from src.data.utils import Options, CleanWord, FilterWord, list2str
 from cached_property import cached_property
 from typing import List, Dict, Optional, Union
 from tqdm import tqdm
@@ -183,18 +183,12 @@ class CleanInfo:
     item['pos'] = self._get_pos(item)
 
     return item
-
-  def _list2str(self, input : List[Dict[str, str]]) -> str:
-    """Split a string in a list and delete the overlapped items """
-    output = np.concatenate([x.split('/') for x in input])
-    without_zero = [x.strip(' ') for x in output if len(x. strip(' ')) > 0]
-    return '/'.join(set(without_zero))
   
   def _gen_dict(self, items : List[Dict[str, str]]) -> Dict[str, str]:
     """Sum the values in a list and generate a dictionary"""
     output = {'word' : items[0]['word']}
     output.update(
-        {key : self._list2str([_[key] for _ in items]) for key in items[0].keys() if key not in ['definition','word']}
+        {key : list2str([_[key] for _ in items]) for key in items[0].keys() if key not in ['definition','word']}
     )
     return output
 
