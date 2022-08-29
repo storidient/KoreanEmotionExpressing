@@ -191,7 +191,7 @@ class CleanInfo:
     for x in tqdm(self.input):
       if self._filter(x['word']):
         word_info = '#%#'.join([x['word'], x['definition']])
-        other_forms.append(x['other_forms'])
+        other_forms[word_info].append(x['other_forms'])
         source[word_info].append(x['source'])
         pos[word_info].append(x['pos'])
         conjugation[word_info] += x['conjugation']
