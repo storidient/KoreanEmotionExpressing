@@ -114,7 +114,7 @@ class ReviseDef(CleanWord):
     without_roman = self.roman_bracket.sub('', without_chinese)
     without_source = re.sub('<img style[^>]*>', '', without_roman)
     without_numbering = self.del_numbering(without_source)
-    without_marks = re.sub('\</?(FL|sub)\>|<DR />|<(sp|each_sense)_no>.*</(sp|each_sense)_no>|<sub style=.*>', '', without_numbering)
+    without_marks = re.sub('\</?(FL|sub)\>|<DR />|<(sp|each_sense)_no>.*</(sp|each_sense)_no>|<sub style=[^>]*>', '', without_numbering)
     output = self.leave_synonym(without_marks)
 
     return self.del_space(output.split('<동의 관용구>')[0])
