@@ -16,7 +16,6 @@ def extract_conjugation(item : List[Dict[str, str]]) -> List[str]:
 class OpenKorean:
   """Get word information from a json file downloaded from Open Korean Dictionary
   (https://opendict.korean.go.kr/main)
-
   Attributes:
     path : a path of json file
     output : a list of dictionaries with word information
@@ -37,6 +36,7 @@ class OpenKorean:
     
   def get_info(self, item) -> Dict[str, str]:
     pos = item['senseinfo']['pos'] if 'pos' in item['senseinfo'].keys() else '품사 없음'
+    pattern = item['senseinfo']['pattern_info'][0]['pattern'] if 'pattern_info' in item['senseinfo'].keys() else '없음'
 
     if ('형용사' in pos or '동사' in pos) and ('conju_info' in item['wordinfo'].keys()):
       conjugation = extract_conjugation(item['wordinfo']['conju_info'])
@@ -46,6 +46,7 @@ class OpenKorean:
     
     return {'word' : item['wordinfo']['word'],
             'word_unit' : item['wordinfo']['word_unit'],
+            'pattern' : pattern,
             'conjugation' : conjugation,
             'definition' : item['senseinfo']['definition'],
             'type' : item['senseinfo']['type'],
