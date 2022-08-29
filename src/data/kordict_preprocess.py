@@ -195,17 +195,18 @@ class CleanInfo:
     """Sum the values in a list and generate a dictionary"""
     output = {'word' : items[0]}
     output.update(
-        {key : self.list2str([_[key] for _ in items]) 
-        for key in items[0].keys() if key not in ['definition','word']})
+        {key : self.list2str([_[key] for _ in items]) for key in items[0].keys() if key not in ['definition','word']}
+    )
     return output
 
   def _wrap(self, 
             input_list : List[Dict[str, str]],
             with_def : bool = False) -> Dict[str, List[Dict[str, str]]]:
     """Sort and zip all the word informtation to delete overlapped words"""
-    output = defaultdict(list)  
-    for x in tqdm(input_list):
-      key = '#%#'.join([x['word'], x['definition']]) if with_def == True else x['word']
+    output = defaultdict(list)
+    for x in input_list:
+      key = x['word'] + '#%#' + x['definition'] if with_def == True else x['word']
+      print(key)
       output[key].append(x)
     return output
   
