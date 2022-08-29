@@ -117,7 +117,7 @@ class ReviseDef(CleanWord):
     without_marks = re.sub('\</?(FL|sub)\>|<DR />|<(sp|each_sense)_no>.*</(sp|each_sense)_no>|<sub style=[^>]*>', '', without_numbering)
     output = self.leave_synonym(without_marks)
 
-    return self.del_space(output.split('<동의 관용구>')[0])
+    return self.del_space(re.split('<동의 (속담|관용구)>', output)[0])
 
 
 class CleanInfo:
