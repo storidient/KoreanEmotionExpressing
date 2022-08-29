@@ -184,7 +184,7 @@ class CleanInfo:
 
     return item
   
-  def wrap_overlap(self):
+  def wrap_overlap(self) -> Dict[str, List[str]]:
     """Sort and zip all the word informtation to delete overlapped words"""
     source, pos, conjugation, pattern = defaultdict(list), defaultdict(list), defaultdict(list), defaultdict(list)
 
