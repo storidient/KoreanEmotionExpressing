@@ -116,7 +116,8 @@ class ReviseDef(CleanWord):
     without_numbering = self.del_numbering(without_source)
     without_marks = re.sub('</?(FL|sub|sup|equ|sp_no|each_sense_no|span)[^>]*>|<DR />', '', without_numbering)
     without_etc = re.sub('또는 ?그런 ?것\.?', '', without_marks)
-    output = self.leave_synonym(without_etc)
+    without_broken = re.sub(' ‘[^’]*\.$', '', without_etc)
+    output = self.leave_synonym(without_broken)
 
     return self.del_space(re.split('<동의 (속담|관용구)>', output)[0])
 
