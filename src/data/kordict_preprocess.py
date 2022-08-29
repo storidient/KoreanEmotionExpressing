@@ -2,7 +2,7 @@ import re, unicodedata
 from collections import defaultdict
 from src.data.utils import Options, CleanWord, FilterWord
 from cached_property import cached_property
-from typing import List, Dict, Optional, Union
+from typing import List, Dict, Optional
 from tqdm import tqdm
 
       
@@ -159,7 +159,7 @@ class CleanInfo:
     else:
       return item['word_unit']
 
-  def _get_pos(self, item):
+  def _get_pos(self, : Dict[str, Union[str, List[str]]]) -> str:
     """Revise the part-of-speech"""
     if item['pos'] == '품사없음' and '어근' in item['definition']:
       return '어근'
@@ -210,9 +210,9 @@ class CleanInfo:
         info_list = [x.split('%?%') for x in word_info.split('#%#')]
         item_dict = {key : val for [key, val] in info_list}
         item_dict['source'] = '/'.join(set(word_source))
-        item_dict['pos'] = list(set(pos[word_info]))
-        item_dict['conjugation'] = list(set(conjugation[word_info]))
-        item_dict['pattern'] = list(set(pattern[word_info]))
+        item_dict['pos'] = '/'.join(set(pos[word_info]))
+        item_dict['conjugation'] = '/'.join(set(conjugation[word_info]))
+        item_dict['pattern'] = '/'.join(set(pattern[word_info]))
 
         output.append(item_dict)
 
