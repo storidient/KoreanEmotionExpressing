@@ -243,7 +243,7 @@ class CleanInfo:
       return output
 
     else:
-      del_same = list(), del_similar = list()
+      del_same, del_similar = list(), list()
       
       same_sorted = self._wrap(output, True)
       for key, items in tqdm(same_sorted.items()):
