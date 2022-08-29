@@ -159,7 +159,7 @@ class CleanInfo:
     else:
       return item['word_unit']
 
-  def _get_pos(self, : Dict[str, Union[str, List[str]]]) -> str:
+  def _get_pos(self, item : Dict[str, Union[str, List[str]]]) -> str:
     """Revise the part-of-speech"""
     if item['pos'] == '품사없음' and '어근' in item['definition']:
       return '어근'
@@ -198,7 +198,7 @@ class CleanInfo:
 
     return source, pos, conjugation, pattern
 
-  def _build(self, del_overlapped : bool) -> List[Dict[str, Union[str, List[str]]]]:
+  def _build(self, del_overlapped : bool) -> List[Dict[str, str]]:
     if del_overlapped == False:
       return [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
