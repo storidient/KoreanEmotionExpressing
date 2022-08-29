@@ -4,6 +4,13 @@ from cached_property import cached_property
 from data.rx_codes import *
 from typing import List
 from itertools import product
+import numpy as np
+
+def _list2str(input : List[Dict[str, str]]) -> str:
+  """Split a string in a list and delete the overlapped items """
+  output = np.concatenate([x.split('/') for x in input])
+  without_zero = [x.strip(' ') for x in output if len(x. strip(' ')) > 0]
+  return '/'.join(set(without_zero))
 
 class Options:
   """
@@ -43,7 +50,6 @@ class Options:
         possible_form = re.sub(target, option_set[idx], possible_form)
       
       self.output.append(possible_form)
-
       
 class CleanWord:
   """Delete unneccessary marks in a word
