@@ -245,12 +245,12 @@ class CleanInfo:
     else:
       del_same, del_similar = list(), list()
       
-      same_sorted = self._wrap(output, True)
-      for key, items in tqdm(same_sorted.items()):
+      for key, items in tqdm(self._wrap(output, True).items()):
         word, definition = key.split('#%#')
         item_dict = self._gen_dict(items)
         item_dict['definition'] = definition
         del_same.append(item_dict)
+      print(del_same[0])
       
       similar_sorted = self._wrap(del_same)
       for key, items in tqdm(similar_sorted.items()):
