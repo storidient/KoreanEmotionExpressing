@@ -217,3 +217,6 @@ class CleanInfo:
         output.append(item_dict)
 
       return output
+
+  def __getitem(self, idx):
+      return self.output[idx]
