@@ -176,7 +176,7 @@ class CleanInfo:
     item['word'] = word
 
     if options != None:
-      item['other_forms'] = '&'.join(set(options))
+      item['other_forms'] = '/'.join(set(options))
     
     item['definition'] = self._def_clean(item['definition'])
     item['word_unit'] = self._get_unit(item)
