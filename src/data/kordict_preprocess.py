@@ -4,6 +4,7 @@ from src.data.utils import Options, CleanWord, FilterWord
 from cached_property import cached_property
 from typing import List, Dict, Optional, Union
 from tqdm import tqdm
+import numpy as np
 
       
 class ReviseRep(CleanWord):
@@ -242,20 +243,20 @@ class CleanInfo:
       return output
 
     else:
-      del_same = list()
-      for key, items in tqdm(self._wrap(output, True).items()):
-        item_dict = self._gen_dict(items)
+      del_same = list(), del_similar = list()
+      
+      same_sorted = self._wrap(output, True)
+      for key, items in tqdm(same_sorted.items()):
         word, definition = key.split('#%#')
-        item_dict.update({'word' : word, 'definition' : definition})
+        item_dict = self._gen_dict(items)
+        item_dict['definition'] = definition
         del_same.append(item_dict)
       
-      del_similar = list()
-      for key, items in tqdm(self._wrap(del_same).items()):
+      similar_sorted = self._wrap(del_same)
+      for key, items in tqdm(similar_sorted.items()):
         source = [_['source'] for _ in items]
-        if source.count('OKD') == 1 and source.count('SKD') == 1 and len(source) == 2:
-          items = self._del_item(word, items)
-   
-        del_similar += items
+        result = self._del_item(word, items) if source.count('OKD') == 1 and source.count('SKD') == 1 and len(source) == 2 else items
+        del_similar += result
       return del_similar
 
   def __getitem__(self, idx):
