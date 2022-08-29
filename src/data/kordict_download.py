@@ -1,5 +1,5 @@
 import json
-from typing import Dict, List, Union
+from typing import Dict, List
 from jamo import h2j, j2hcj
 
 
@@ -30,10 +30,10 @@ class OpenKorean:
       self.data = json.load(f)
     self.output = self._build()
 
-  def _build(self) -> List[Dict[str, Union[str, List[str]]]]:
+  def _build(self) -> List[Dict[str, str]]:
     return list(map(self.get_info, self.data['channel']['item']))
     
-  def get_info(self, item) -> Dict[str, Union[str, List[str]]]:
+  def get_info(self, item) -> Dict[str, str]:
     pos = item['senseinfo']['pos'] if 'pos' in item['senseinfo'].keys() else '품사 없음'
     pattern = item['senseinfo']['pattern_info'][0]['pattern'] if 'pattern_info' in item['senseinfo'].keys() else '없음'
 
@@ -74,10 +74,10 @@ class StandardKorean:
       self.data = json.load(f)
     self.output = self._build()
     
-  def _build(self) -> List[Dict[str, Union[str, List[str]]]]:
+  def _build(self) -> List[Dict[str, str]]:
     return sum(list(map(self.get_info, self.data['channel']['item'])),[])
     
-  def get_info(self, item) -> List[Dict[str, Union[str, List[str]]]]:
+  def get_info(self, item) -> List[Dict[str, str]]:
     item = item['word_info']
     item_pos = item['pos_info']
     item_pattern = item_pos[0]['comm_pattern_info']
