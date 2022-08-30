@@ -74,21 +74,23 @@ class ReviseRep(CleanWord):
 
     return rep, options
 
+
 class ReviseDef(CleanWord):
   def __init__(self):
     super().__init__()
+    self.clean_rep = ReviseRep(False).run
   
   def del_numbering(self, item : str) -> str:
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
-    targets = re.findall("['‘][^’]*[0-9]+[^’]*[’']", item)
+    targets = re.findall("['‘][^’]*[’']", item)
       
     for target in targets:
-      without_num = re.sub('[0-9]', '', target)
+      revised = self.clean_rep(target)
       
       if without_num != target:
         target = re.sub('\]', '\]', re.sub('\[', '\[', target))
-        item = re.sub(target, without_num, item)
+        item = re.sub(target, revised, item)
     
     return re.sub('[\[「][0-9]*[\]」]', '', item)
   
@@ -206,11 +208,10 @@ class CleanInfo:
     """Delete overlapped items in a list"""
     def_list = [_['definition'] for _ in items]
       
-    if len(set([re.sub(' ' , '', x) for x in def_list])) == 0: #different in spacing
+    if len(set([re.sub(' ' , '', x) for x in def_list])) == 1: #different in spacing
       new_dict = self._gen_dict(items)
       new_dict['definition'] =  items[0]['definition']
       items = [new_dict]
-      print(def_list)
     
     elif def_list[0] in def_list[-1]: # B includes A
       new_dict = self._gen_dict(items)
@@ -229,13 +230,23 @@ class CleanInfo:
         new_dict = self._gen_dict(items)
         new_dict['definition'] =  items[0]['definition']
         items = [new_dict]
-        #print(def_list, new_dict['definition']) #TODO
 
-      elif len(set(a_tokens) ^ set(b_tokens)) < 3:
+      elif len(set(a_tokens) - set(b_tokens)) == 1 and len(set(b_tokens) - set(a_tokens)) == 1:
         new_dict = self._gen_dict(items)
-        new_dict['definition'] =  '/'.join(def_list)
+        new_dict['definition'] =  ' '.join(
+            [x if x in a_tokens else x + '(' + '/'.join(set(a_tokens) - set(b_tokens)) + ')' for x in b_tokens]
+            )
         items = [new_dict]
-      
+        print(new_dict['definition'], def_list)
+
+      elif len(set(b_tokens) ^ set(a_tokens)) < 3:
+        new_dict = self._gen_dict(items)
+        new_dict['definition'] =  ' '.join(
+            [x if x in b_tokens else x + '(' + '/'.join(set(b_tokens) - set(a_tokens)) + ')' for x in a_tokens]
+            )
+        items = [new_dict]
+        #print('b-a', new_dict['definition'], def_list)
+
       else:
         pass#print(def_list)
         
