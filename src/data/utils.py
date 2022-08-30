@@ -6,7 +6,7 @@ from typing import List, Dict
 from itertools import product
 import numpy as np
 
-def _list2str(input : List[Dict[str, str]]) -> str:
+def list2str(input : List[Dict[str, str]]) -> str:
   """Split a string in a list and delete the overlapped items """
   output = np.concatenate([x.split('/') for x in input])
   without_zero = [x.strip(' ') for x in output if len(x. strip(' ')) > 0]
