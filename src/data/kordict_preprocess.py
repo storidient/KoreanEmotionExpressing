@@ -205,8 +205,14 @@ class CleanInfo:
   def _del_item(self, items : List[Dict[str, str]]) -> List[Dict[str, str]]:
     """Delete overlapped items in a list"""
     def_list = [_['definition'] for _ in items]
+      
+    if len(set([re.sub(' ' , '', x) for x in def_list])) == 0: #different in spacing
+      new_dict = self._gen_dict(items)
+      new_dict['definition'] =  items[0]['definition']
+      items = [new_dict]
+      print(new_dict['definition'])
     
-    if def_list[0] in def_list[-1]: # B includes A
+    elif def_list[0] in def_list[-1]: # B includes A
       new_dict = self._gen_dict(items)
       new_dict['definition'] =  items[-1]['definition']
       items = [new_dict]
@@ -215,7 +221,7 @@ class CleanInfo:
       new_dict = self._gen_dict(items)
       new_dict['definition'] =  items[0]['definition']
       items = [new_dict]
-
+      
     else:
       a_tokens, b_tokens = def_list[0].split(' '), def_list[-1].split(' ')
       
@@ -223,19 +229,16 @@ class CleanInfo:
         new_dict = self._gen_dict(items)
         new_dict['definition'] =  items[0]['definition']
         items = [new_dict]
+        print(def_list, new_dict['definition']) #TODO
 
-      elif len(set(a_tokens) - set(b_tokens)) == 1:
+      elif len(set(a_tokens) ^ set(b_tokens)) < 3:
         new_dict = self._gen_dict(items)
-        new_dict['definition'] =  ' '.join([x if x in b_tokens else x + '(' + '/'.join(set(b_tokens) - set(a_tokens)) + ')' for x in a_tokens])
+        new_dict['definition'] =  '/'.join(def_list)
         items = [new_dict]
-        print('a-b', def_list, new_dict['definition'])
       
-      elif len(set(b_tokens) - set(a_tokens)) == 1:
-        new_dict = self._gen_dict(items)
-        new_dict['definition'] =  ' '.join([x if x in a_tokens else x + '(' + '/'.join(set(a_tokens) - set(b_tokens)) + ')' for x in b_tokens])
-        items = [new_dict]
-        print('b-a', def_list, new_dict['definition'])
-      
+      else:
+        print(def_list)
+        
     return items
         
   def _build(self, del_overlapped : bool) -> List[Dict[str, str]]:
