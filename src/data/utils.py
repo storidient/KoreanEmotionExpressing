@@ -6,6 +6,12 @@ from typing import List, Dict
 from itertools import product
 import numpy as np
 
+def prevent_rx(input: str) -> str:
+  #Prevent regex error
+  output = re.sub('\]', '\]', re.sub('\[', '\[', input))#Prevent regex error
+  output = re.sub('\)', '\)', re.sub('\(', '\(', output))#Prevent regex error
+  return re.sub('\?', '\?', output)
+
 def list2str(input : List[Dict[str, str]]) -> str:
   """Split a string in a list and delete the overlapped items """
   output = np.concatenate([x.split('/') for x in input])
