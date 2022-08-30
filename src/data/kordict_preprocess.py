@@ -210,7 +210,7 @@ class CleanInfo:
       new_dict = self._gen_dict(items)
       new_dict['definition'] =  items[0]['definition']
       items = [new_dict]
-      print(new_dict['definition'])
+      print(def_list)
     
     elif def_list[0] in def_list[-1]: # B includes A
       new_dict = self._gen_dict(items)
@@ -229,7 +229,7 @@ class CleanInfo:
         new_dict = self._gen_dict(items)
         new_dict['definition'] =  items[0]['definition']
         items = [new_dict]
-        print(def_list, new_dict['definition']) #TODO
+        #print(def_list, new_dict['definition']) #TODO
 
       elif len(set(a_tokens) ^ set(b_tokens)) < 3:
         new_dict = self._gen_dict(items)
@@ -237,7 +237,7 @@ class CleanInfo:
         items = [new_dict]
       
       else:
-        print(def_list)
+        #print(def_list)
         
     return items
         
