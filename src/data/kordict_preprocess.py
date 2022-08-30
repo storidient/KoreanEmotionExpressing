@@ -90,8 +90,8 @@ class ReviseDef(CleanWord):
       revised = self.clean_rep(target)[0]
       
       if revised != target:
-        target = re.sub('\]', '\]', re.sub('\[', '\[', target))
-        target = re.sub('\)', '\)', re.sub('\(', '\(', target))
+        target = re.sub('\]', '\]', re.sub('\[', '\[', target))#Prevent regex error
+        target = re.sub('\)', '\)', re.sub('\(', '\(', target))#Prevent regex error
         item = re.sub(target, revised, item)
     
     return re.sub('[\[「][0-9]*[\]」]', '', item)
@@ -183,6 +183,15 @@ class CleanInfo:
     if options != None:
       item['other_forms'] = '/'.join(set(options))
     
+    if re.match('.*‘[^’가-힣ㄱ-ㅎ]*’', item['definition']):#If there is only number without representation form
+      targets = re.findall("‘[^’가-힣ㄱ-ㅎ]*’", item)
+      
+      for target in targets:
+        revised = '‘' + item['word'] + '’'
+        target = re.sub('\]', '\]', re.sub('\[', '\[', target))#Prevent regex error
+        target = re.sub('\)', '\)', re.sub('\(', '\(', target))#Prevent regex error
+        item['definition'] = re.sub(target, revised, item['definition'])
+      
     item['definition'] = self._def_clean(item['definition'])
     item['word_unit'] = self._get_unit(item)
     item['pos'] = self._get_pos(item)
