@@ -106,7 +106,7 @@ class ReviseDef(CleanWord):
       if len(synonym_list) > 0:
         item = '→ ' + re.sub('[‘’]', '', synonym_list[0])
     
-    elif '준말' in item or '줄여' in item:
+    elif '준말' in item or '줄여' in item or '전 용어' in item:
       synonym_list = re.findall('‘.*’', item)
       if len(synonym_list) > 0:
         item = '→ ' + re.sub('[‘’]', '', synonym_list[0])
