@@ -70,10 +70,9 @@ class CleanWord:
     return re.sub('[\[\(][\]\)]', '', self.chinese_rx.sub('', item))
   
   def del_english(self, item : str) -> str:
-     """Delete the English letters and empty brackets (e.g. '[]', '()')"""
+    """Delete the English letters and empty brackets (e.g. '[]', '()')"""
     return re.sub('[\[\(][\]\)]', '', re.sub('[A-Z][a-z]+', '', item))
     
-
   def del_space(self, item : str) -> str:
     """Delete unneccessary spaces in a word"""
     return re.sub(' +', ' ', item.strip())
