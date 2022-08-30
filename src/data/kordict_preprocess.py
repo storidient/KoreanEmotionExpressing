@@ -114,7 +114,7 @@ class ReviseDef(CleanWord):
   
   def run(self, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
-    without_chinese = self.del_chinese_with_bracket(item)
+    without_chinese = self.del_chinese_bracket(item)
     without_english = self.del_english(without_chinese)
     without_numbering = self.clean_rep(without_english)
     without_marks = re.sub('</?(FL|sub|sup|equ|sp_?no|each_sense_no|span|img|ptrn ?no)[^>]*>|<DR />|[_\-]', '', without_numbering)
