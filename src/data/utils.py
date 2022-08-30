@@ -2,7 +2,7 @@ import re, unicodedata
 from collections import defaultdict
 from cached_property import cached_property
 from data.rx_codes import *
-from typing import List
+from typing import List, Dict
 from itertools import product
 import numpy as np
 
