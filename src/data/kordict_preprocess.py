@@ -219,10 +219,10 @@ class CleanInfo:
     elif len(set(def_list[0].split(' ')) - set(def_list[0].split(' '))) < 2: #less than two word different
       new_dict = self._gen_dict(items)
       new_dict['definition'] = '/'.join(def_list)  
+      print(def_list)
       return [new_dict]
 
     else:
-      print(def_list)
       return items
 
   def _build(self, del_overlapped : bool) -> List[Dict[str, str]]:
