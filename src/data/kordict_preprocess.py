@@ -237,7 +237,7 @@ class CleanInfo:
         items = [new_dict]
       
       else:
-        #print(def_list)
+        pass#print(def_list)
         
     return items
         
