@@ -83,8 +83,7 @@ class ReviseDef(CleanWord):
   def del_numbering(self, item : str) -> str:
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
-    word_reps = re.findall("‘[^’]*’", item)
-    targets = [_ for _ in word_reps if len(re.findall(self.chinese_rx, _)) == 0 or re.fullmatch('‘[0-9]+’', _)]
+    targets = re.findall("‘[^’\[]*[가-힣+][^’]*’", item)
       
     for target in targets:
       revised = self.clean_rep(target)[0]
