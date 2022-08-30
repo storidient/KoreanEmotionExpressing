@@ -111,15 +111,24 @@ class ReviseDef(CleanWord):
       
     return item
   
+  def del_hyphen(self, item: str) -> str:
+    """Delete hyphens in a string(except hyphens surrounded with '‘’')"""
+    item = list(item)
+    for idx in np.where(np.array(item) == '-')[0]:
+      if item[max(idx-1, 0)] != '‘':
+        item[idx] = ''
+    return ''.join(item)
+  
   def run(self, word : str, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
     without_chinese = self.del_chinese_bracket(item)
     without_english = self.del_english(without_chinese)
     without_numbering = self.del_numbering(without_english)
-    without_marks = re.sub('</?(FL|sub|sup|equ|sp_?no|each_sense_no|span|img|ptrn ?no)[^>]*>|<DR />|[_\-]', '', without_numbering)
-    without_roman = self.roman_bracket.sub('', without_marks)
+    without_marks = re.sub('</?(FL|sub|sup|equ|sp_?no|each_sense_no|span|img|ptrn ?no|DR)[^>]*>', '', without_numbering)
+    without_hyphen = self.del_hyphen(without_marks)
+    without_roman = self.roman_bracket.sub('', without_hyphen)
     without_etc = re.sub('또는 ?그런 ?것\.?', '', without_roman)
-    without_broken = re.sub(' ‘[^’]*\.$', '', without_etc)
+    without_broken = re.sub(' ‘[^’]*\.$|_', '', without_etc)
     output = self.leave_synonym(without_broken)
 
     return self.del_space(re.split('<동의 (속담|관용구)>', output)[0])
