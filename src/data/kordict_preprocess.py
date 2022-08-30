@@ -80,11 +80,10 @@ class ReviseDef(CleanWord):
     super().__init__()
     self.clean_rep = ReviseRep(False).run
   
-  def del_numbering(self, item : str) -> str:
+  def clean_rep(self, item : str) -> str:
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
-    
-    targets = re.findall("‘[^’]*’", item)
+    targets = [_ for _ in re.findall("‘[^’]*’", item) if len(re.findall(self.chinese, _)) == 0]
       
     for target in targets:
       revised = self.clean_rep(target)[0]
@@ -115,9 +114,9 @@ class ReviseDef(CleanWord):
   
   def run(self, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
-    without_chinese = self.del_chinese(item)
+    without_chinese = self.del_chinese_with_bracket(item)
     without_english = self.del_english(without_chinese)
-    without_numbering = self.del_numbering(without_english)
+    without_numbering = self.clean_rep(without_english)
     without_marks = re.sub('</?(FL|sub|sup|equ|sp_?no|each_sense_no|span|img|ptrn ?no)[^>]*>|<DR />|[_\-]', '', without_numbering)
     without_roman = self.roman_bracket.sub('', without_marks)
     without_etc = re.sub('또는 ?그런 ?것\.?', '', without_roman)
