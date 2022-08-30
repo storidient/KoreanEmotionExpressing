@@ -83,13 +83,15 @@ class ReviseDef(CleanWord):
   def del_numbering(self, item : str) -> str:
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
-    targets = re.findall("['‘][^’]*[’']", item)
+    
+    targets = re.findall("‘[^’]*’", item)
       
     for target in targets:
-      revised = self.clean_rep(target)
+      revised = self.clean_rep(target)[0]
       
-      if without_num != target:
+      if revised != target:
         target = re.sub('\]', '\]', re.sub('\[', '\[', target))
+        target = re.sub('\)', '\)', re.sub('\(', '\(', target))
         item = re.sub(target, revised, item)
     
     return re.sub('[\[「][0-9]*[\]」]', '', item)
@@ -114,10 +116,10 @@ class ReviseDef(CleanWord):
   def run(self, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
     without_chinese = self.del_chinese(item)
-    without_marks = re.sub('</?(FL|sub|sup|equ|sp_no|each_sense_no|span|img)[^>]*>|<DR />|_', '', without_chinese)
+    without_numbering = self.del_numbering(without_chinese)
+    without_marks = re.sub('</?(FL|sub|sup|equ|sp_no|each_sense_no|span|img)[^>]*>|<DR />|_', '', without_numbering)
     without_roman = self.roman_bracket.sub('', without_marks)
-    without_numbering = self.del_numbering(without_roman)
-    without_etc = re.sub('또는 ?그런 ?것\.?', '', without_numbering)
+    without_etc = re.sub('또는 ?그런 ?것\.?', '', without_roman)
     without_broken = re.sub(' ‘[^’]*\.$', '', without_etc)
     output = self.leave_synonym(without_broken)
 
