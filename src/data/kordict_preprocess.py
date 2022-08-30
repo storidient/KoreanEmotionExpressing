@@ -228,13 +228,13 @@ class CleanInfo:
         new_dict = self._gen_dict(items)
         new_dict['definition'] =  ' '.join([x if x in b_tokens else x + '(' + '/'.join(set(b_tokens) - set(a_tokens)) + ')' for x in a_tokens])
         items = [new_dict]
-        print(dict_list, new_dict['definition'])
+        print('a-b', dict_list, new_dict['definition'])
       
       elif set(b_tokens) - set(a_tokens) == 1:
         new_dict = self._gen_dict(items)
         new_dict['definition'] =  ' '.join([x if x in a_tokens else x + '(' + '/'.join(set(a_tokens) - set(b_tokens)) + ')' for x in b_tokens])
         items = [new_dict]
-        
+        print('b-a', dict_list, new_dict['definition'])
       
     return items
         
