@@ -227,7 +227,7 @@ class CleanInfo:
 
       elif len(rest) == 1:
         new_dict = self._gen_dict(items)
-        new_dict['definition'] =  ' '.join([x if x in b_tokens else x + '/' + '/'.join(rest) for x in b_tokens])
+        new_dict['definition'] =  ' '.join([x if x in b_tokens else x + '(' + rest[0] + ')' for x in b_tokens])
         items = [new_dict]
         print(def_list, new_dict['definition'])
       
