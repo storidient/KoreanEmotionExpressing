@@ -1,6 +1,6 @@
 import re, unicodedata
 from collections import defaultdict
-from src.data.utils import Options, CleanWord, FilterWord, list2str
+from src.data.utils import Options, CleanWord, FilterWord, list2str, prevent_rx
 from cached_property import cached_property
 from typing import List, Dict, Optional, Union
 from tqdm import tqdm
@@ -80,7 +80,7 @@ class ReviseDef(CleanWord):
     super().__init__()
     self.clean_rep = ReviseRep(False).run
   
-  def clean_rep(self, item : str) -> str:
+  def del_numbering(self, item : str) -> str:
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
     word_reps = re.findall("‘[^’]*’", item)
@@ -90,8 +90,7 @@ class ReviseDef(CleanWord):
       revised = self.clean_rep(target)[0]
       
       if revised != target:
-        target = re.sub('\]', '\]', re.sub('\[', '\[', target))#Prevent regex error
-        target = re.sub('\)', '\)', re.sub('\(', '\(', target))#Prevent regex error
+        target = prevent_rx(target)
         item = re.sub(target, revised, item)
     
     return re.sub('[\[「][0-9]*[\]」]', '', item)
@@ -112,12 +111,23 @@ class ReviseDef(CleanWord):
         item = '→ ' + re.sub('[‘’]', '', synonym_list[0])
       
     return item
+
+  def fill_rep(self, word : str, definition : str) -> str:
+    if re.match('.*‘「[0-9]+」’', definition):#If there is only number without representation form
+      targets = re.findall("‘「[0-9]+」’", definition)
+      for target in targets:
+        revised = '‘' + word + '’'
+        target = prevent_rx(target)
+        definition = re.sub(target, revised, definition)
+
+    return definition
   
-  def run(self, item : str) -> str:
+  def run(self, word : str, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
+    revised = self.fill_rep(word, item)
     without_chinese = self.del_chinese_bracket(item)
     without_english = self.del_english(without_chinese)
-    without_numbering = self.clean_rep(without_english)
+    without_numbering = self.del_numbering(without_english)
     without_marks = re.sub('</?(FL|sub|sup|equ|sp_?no|each_sense_no|span|img|ptrn ?no)[^>]*>|<DR />|[_\-]', '', without_numbering)
     without_roman = self.roman_bracket.sub('', without_marks)
     without_etc = re.sub('또는 ?그런 ?것\.?', '', without_roman)
