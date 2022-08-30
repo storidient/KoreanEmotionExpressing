@@ -205,13 +205,8 @@ class CleanInfo:
   def _del_item(self, items : List[Dict[str, str]]) -> List[Dict[str, str]]:
     """Delete overlapped items in a list"""
     def_list = [_['definition'] for _ in items]
-
-    if len(set([re.sub(' ', '', _) for _ in def_list])) == 1:#same but different in spacing
-      new_dict = self._gen_dict(items)
-      new_dict['definition'] =  items[0]['definition']
-      return [new_dict]
     
-    elif def_list[0] in def_list[-1]: # B includes A
+    if def_list[0] in def_list[-1]: # B includes A
       new_dict = self._gen_dict(items)
       new_dict['definition'] =  items[-1]['definition']
       return [new_dict]
@@ -221,12 +216,13 @@ class CleanInfo:
       new_dict['definition'] =  items[0]['definition']
       return [new_dict]
 
-    elif len(set(def_list[0].split(' ')) - set(def_list[0].split(' '))) < 2: #one word different
+    elif len(set(def_list[0].split(' ')) - set(def_list[0].split(' '))) < 2: #less than two word different
       new_dict = self._gen_dict(items)
       new_dict['definition'] = '/'.join(def_list)  
       return [new_dict]
 
     else:
+      print(def_list)
       return items
 
   def _build(self, del_overlapped : bool) -> List[Dict[str, str]]:
