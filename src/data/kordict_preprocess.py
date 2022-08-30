@@ -219,18 +219,18 @@ class CleanInfo:
     else:
       a_tokens, b_tokens = def_list[0].split(' '), def_list[-1].split(' ')
       
-      if set(a_tokens) - set(b_tokens) == 0:
+      if len(set(a_tokens) - set(b_tokens)) == 0:
         new_dict = self._gen_dict(items)
         new_dict['definition'] =  items[0]['definition']
         items = [new_dict]
 
-      elif set(a_tokens) - set(b_tokens) == 1:
+      elif len(set(a_tokens) - set(b_tokens)) == 1:
         new_dict = self._gen_dict(items)
         new_dict['definition'] =  ' '.join([x if x in b_tokens else x + '(' + '/'.join(set(b_tokens) - set(a_tokens)) + ')' for x in a_tokens])
         items = [new_dict]
         print('a-b', dict_list, new_dict['definition'])
       
-      elif set(b_tokens) - set(a_tokens) == 1:
+      elif len(set(b_tokens) - set(a_tokens)) == 1:
         new_dict = self._gen_dict(items)
         new_dict['definition'] =  ' '.join([x if x in a_tokens else x + '(' + '/'.join(set(a_tokens) - set(b_tokens)) + ')' for x in b_tokens])
         items = [new_dict]
