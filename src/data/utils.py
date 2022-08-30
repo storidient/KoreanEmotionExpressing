@@ -64,10 +64,15 @@ class CleanWord:
     self.blank_chinese = blank_chinese
     self.katakana_middle = katakana_middle
     self.roman_bracket = roman_bracket
+    self.ch_with_bracket = re.compile('\(' + build_rx(chinese_unicode) + '+\)', re.UNICODE)
   
   def del_chinese(self, item : str) -> str:
     """Delete the Chinese letters and empty brackets (e.g. '[]', '()')"""
     return re.sub('[\[\(][\]\)]', '', self.chinese_rx.sub('', item))
+  
+  def del_chinese_bracket(self, item : str) -> str:
+    """Delete the Chinese letters and empty brackets (e.g. '[]', '()')"""
+    return re.sub('[\[\(][\]\)]', '', self.ch_with_bracket.sub('', item))
   
   def del_english(self, item : str) -> str:
     """Delete the English letters and empty brackets (e.g. '[]', '()')"""
