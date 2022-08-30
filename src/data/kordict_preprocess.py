@@ -209,30 +209,30 @@ class CleanInfo:
     if def_list[0] in def_list[-1]: # B includes A
       new_dict = self._gen_dict(items)
       new_dict['definition'] =  items[-1]['definition']
-      return [new_dict]
+      items = [new_dict]
 
     elif def_list[-1] in def_list[0]: # A includes B
       new_dict = self._gen_dict(items)
       new_dict['definition'] =  items[0]['definition']
-      return [new_dict]
+      items = [new_dict]
 
     else:
       a_tokens, b_tokens = def_list[0].split(' '), def_list[-1].split(' ')
       rest = set(a_tokens) - set(b_tokens)
+      
       if len(rest) == 0:
         new_dict = self._gen_dict(items)
         new_dict['definition'] =  items[0]['definition']
-        return [new_dict]
+        items = [new_dict]
 
       elif len(rest) == 1:
         new_dict = self._gen_dict(items)
-        new_dict['definition'] =  ' '.join([x if x in b_tokens else x + '/' + '/'.join(rest) for x in a_tokens])
+        new_dict['definition'] =  ' '.join([x if x in b_tokens else x + '/' + '/'.join(rest) for x in b_tokens])
+        items = [new_dict]
         print(def_list, new_dict['definition'])
-        return [new_dict]
       
-      else:
-        return items
-
+    return items
+        
   def _build(self, del_overlapped : bool) -> List[Dict[str, str]]:
     output = [self._get_info(x) for x in tqdm(self.input) if self._filter(x['word'])]
 
