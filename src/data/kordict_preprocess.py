@@ -117,7 +117,7 @@ class ReviseDef(CleanWord):
     """Delete all the unneccessary marks in word definition"""
     without_chinese = self.del_chinese(item)
     without_numbering = self.del_numbering(without_chinese)
-    without_marks = re.sub('</?(FL|sub|sup|equ|sp_no|each_sense_no|span|img)[^>]*>|<DR />|_', '', without_numbering)
+    without_marks = re.sub('</?(FL|sub|sup|equ|sp_no|each_sense_no|span|img|ptrnno)[^>]*>|<DR />|_', '', without_numbering)
     without_roman = self.roman_bracket.sub('', without_marks)
     without_etc = re.sub('또는 ?그런 ?것\.?', '', without_roman)
     without_broken = re.sub(' ‘[^’]*\.$', '', without_etc)
