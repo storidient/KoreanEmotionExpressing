@@ -83,6 +83,7 @@ class ReviseDef(CleanWord):
   def del_numbering(self, item : str) -> str:
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
+    item = re.sub('[\[「][0-9]+[\]」]', '', item)
     targets = re.findall("‘[^’\[]*[가-힣+][^’]*’", item)
       
     for target in targets:
@@ -92,7 +93,7 @@ class ReviseDef(CleanWord):
         target = prevent_rx(target)
         item = re.sub(target, revised, item)
     
-    return re.sub('[\[「][0-9]*[\]」]', '', item)
+    return item
   
   def leave_synonym(self, item : str) -> str:
     """If the definition of word consists of synonym, leave the synonym and delete others"""
