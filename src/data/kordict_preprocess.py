@@ -110,20 +110,9 @@ class ReviseDef(CleanWord):
         item = '→ ' + re.sub('[‘’]', '', synonym_list[0])
       
     return item
-
-  def fill_rep(self, word : str, definition : str) -> str:
-    if re.match('.*‘「[0-9]+」’', definition):#If there is only number without representation form
-      targets = re.findall("‘「[0-9]+」’", definition)
-      for target in targets:
-        revised = '‘' + word + '’'
-        target = prevent_rx(target)
-        definition = re.sub(target, revised, definition)
-
-    return definition
   
   def run(self, word : str, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
-    revised = self.fill_rep(word, item)
     without_chinese = self.del_chinese_bracket(item)
     without_english = self.del_english(without_chinese)
     without_numbering = self.del_numbering(without_english)
@@ -183,6 +172,16 @@ class CleanInfo:
 
     else:
       return item['pos']
+
+  def _fill_rep(self, word : str, definition : str) -> str:
+    if re.match('.*‘「[0-9]+」’', definition):#If there is only number without representation form
+      targets = re.findall("‘「[0-9]+」’", definition)
+      for target in targets:
+        revised = '‘' + word + '’'
+        target = prevent_rx(target)
+        definition = re.sub(target, revised, definition)
+
+    return definition
   
   def _get_info(self, item : Dict[str, str]) -> Dict[str, str]:
     """Revise all the inforamtion about a word"""
@@ -192,15 +191,7 @@ class CleanInfo:
     if options != None:
       item['other_forms'] = '/'.join(set(options))
     
-    if re.match('.*‘[^’가-힣ㄱ-ㅎ]*’', item['definition']):#If there is only number without representation form
-      targets = re.findall("‘[^’가-힣ㄱ-ㅎ]*’", item)
-      
-      for target in targets:
-        revised = '‘' + item['word'] + '’'
-        target = re.sub('\]', '\]', re.sub('\[', '\[', target))#Prevent regex error
-        target = re.sub('\)', '\)', re.sub('\(', '\(', target))#Prevent regex error
-        item['definition'] = re.sub(target, revised, item['definition'])
-      
+    item['definition'] = self._fill_rep(item['word'], item['definition'])  
     item['definition'] = self._def_clean(item['definition'])
     item['word_unit'] = self._get_unit(item)
     item['pos'] = self._get_pos(item)
