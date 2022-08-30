@@ -71,7 +71,7 @@ class CleanWord:
   
   def del_english(self, item : str) -> str:
     """Delete the English letters and empty brackets (e.g. '[]', '()')"""
-    return re.sub('[\[\(][\]\)]', '', re.sub('[A-Z][a-z]+', '', item))
+    return re.sub('[\[\(][\]\)]', '', re.sub('\([A-Za-z]+\)', '', item))
     
   def del_space(self, item : str) -> str:
     """Delete unneccessary spaces in a word"""
