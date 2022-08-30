@@ -84,7 +84,7 @@ class ReviseDef(CleanWord):
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
     item = re.sub('[\[「][0-9]+[\]」]', '', item)
-    targets = re.findall("‘[^’\[]*[가-힣+][^’]*’", item)
+    targets = re.findall("‘[^’\[\(]*[가-힣]+[^’]*’", item)
       
     for target in targets:
       revised = self.clean_rep(target)[0]
