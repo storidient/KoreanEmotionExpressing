@@ -119,7 +119,7 @@ class ReviseDef(CleanWord):
         item[idx] = ''
     return ''.join(item)
   
-  def run(self, word : str, item : str) -> str:
+  def run(self, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
     without_chinese = self.del_chinese_bracket(item)
     without_english = self.del_english(without_chinese)
