@@ -12,11 +12,13 @@ def prevent_rx(input: str) -> str:
   output = re.sub('\)', '\)', re.sub('\(', '\(', output))#Prevent regex error
   return re.sub('\?', '\?', output)
 
+
 def list2str(input : List[Dict[str, str]]) -> str:
   """Split a string in a list and delete the overlapped items """
   output = np.concatenate([x.split('/') for x in input])
   without_zero = [x.strip(' ') for x in output if len(x. strip(' ')) > 0]
   return '/'.join(set(without_zero))
+
 
 class Options:
   """
@@ -57,6 +59,7 @@ class Options:
       
       self.output.append(possible_form)
       
+      
 class CleanWord:
   """Delete unneccessary marks in a word
 
@@ -70,7 +73,7 @@ class CleanWord:
     self.blank_chinese = blank_chinese
     self.katakana_middle = katakana_middle
     self.roman_bracket = roman_bracket
-    self.ch_with_bracket = re.compile('\(' + build_rx(chinese_unicode) + '+\)', re.UNICODE)
+    self.ch_with_bracket = re.compile('[\(\[]' + build_rx(chinese_unicode) + '+[\)\]]', re.UNICODE)
   
   def del_chinese(self, item : str) -> str:
     """Delete the Chinese letters and empty brackets (e.g. '[]', '()')"""
