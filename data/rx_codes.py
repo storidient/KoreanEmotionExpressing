@@ -1,6 +1,11 @@
 import re
 from typing import List, Tuple
 
+def build_rx(unicode_list : List[Tuple[str, str]]) -> str:
+  """compile regular expression with unicodes"""
+  unicodes = ''.join(['%s-%s' % (s,t) for s, t in unicode_list])
+  return '[' + unicodes +']'
+
 old_korean_unicode = [('\u3164', '\u318c'),
                       ('\u318e', '\u318f'), 
                       ('\ua960', '\ua97f'),
@@ -22,13 +27,8 @@ chinese_unicode = [('\u31c0', '\u31ef'),
 
 roman_num = [('\u2160', '\u217f')]
 
-def build_rx(unicode_list : List[Tuple[str, str]]) -> str:
-  """compile regular expression with unicodes"""
-  unicodes = ''.join(['%s-%s' % (s,t) for s, t in unicode_list])
-  return '[' + unicodes +']'
-
 old_kor_rx = re.compile('.*' + build_rx(old_korean_unicode), re.UNICODE)
-chinese_rx = re.compile(build_rx(chinese_unicode), re.UNICODE)
+chinese_rx = re.compile('[\[\(]?' + build_rx(chinese_unicode) + '[\]\)]?', re.UNICODE)
 blank_chinese= re.compile('[\u3000]', re.UNICODE)
 katakana_middle = re.compile('[\u30fb]', re.UNICODE)
 roman_num_rx = build_rx(roman_num)
