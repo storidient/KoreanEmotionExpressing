@@ -77,15 +77,15 @@ class CleanWord:
   
   def del_chinese(self, item : str) -> str:
     """Delete the Chinese letters and empty brackets (e.g. '[]', '()')"""
-    return re.sub('[\[\(][\]\)]', '', self.chinese_rx.sub('', item))
+    return self.chinese_rx.sub('', item)
   
   def del_chinese_bracket(self, item : str) -> str:
     """Delete the Chinese letters and empty brackets (e.g. '[]', '()')"""
-    return re.sub('[\[\(][\]\)]', '', self.ch_with_bracket.sub('', item))
+    return self.ch_with_bracket.sub('', item)
   
   def del_english(self, item : str) -> str:
     """Delete the English letters and empty brackets (e.g. '[]', '()')"""
-    return re.sub('[\[\(][\]\)]', '', re.sub('\([ A-Za-z]+\)', '', item))
+    return re.sub('[\(\[][ A-Za-z]+[\(\]]', '', item)
     
   def del_space(self, item : str) -> str:
     """Delete unneccessary spaces in a word"""
