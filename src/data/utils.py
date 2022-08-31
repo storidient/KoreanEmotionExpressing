@@ -101,7 +101,7 @@ class CleanWord:
     without_roman = self.roman_bracket.sub('', without_katakana)
     without_numbering = re.sub('[\[「]]?[0-9]+[\]」]?', '', without_roman)
     
-    return re.sub('[\.,\-_]', without_numbering)
+    return re.sub('[\.,\-_]', '', without_numbering)
 
 
 class FilterWord:
