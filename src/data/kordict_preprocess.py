@@ -79,22 +79,27 @@ class ReviseDef(CleanWord):
   def __init__(self):
     super().__init__()
     self.clean_rep = ReviseRep(False).run
+    self.rep_rx = re.compile("‘[^’]+[^’]*’")
   
-  def del_numbering(self, item : str) -> str:
+  def find_rep(self, item: str) -> str:
+    targets = [[x.start(0), x.end(0)]for x in self.rep_rx.finditer(item)]
+    token_indice = sorted(sum(targets,[]) + [0, len(item)])
+    tokens = [item[s:e] for s,e in pairwise(token_indice) if len(item[s:e]) > 0]
+    rep_indice = set(list(sum([np.where(tokens == x)[0] for x in self.rep_rx.findall(item)], [])))
+
+    return tokens, rep_indice
+
+  def revise_else(self, item:str) -> str:
+    without_chinese = self.del_chinese_bracket(item)
+    without_english = self.del_english(without_chinese)
+    without_hyphen = re.sub('\-', '', without_english)
+    return without_hyphen
+  
+  def revise_rep(self, item :str) -> str:
     """delete numbers with the word representation
     (e.g. '‘단어01’의 준말')"""
-    item = re.sub('[\[「][0-9]+[\]」]', '', item)
-    targets = re.findall("‘[^’\[\(]*[가-힣]+[^’]*’", item)
-      
-    for target in targets:
-      revised = self.clean_rep(target)[0]
-      
-      if revised != target:
-        target = prevent_rx(target)
-        item = re.sub(target, revised, item)
-    
-    return item
-  
+    return self.clean_rep(item)[0] if re.match('‘[^.*’\(]*[가-힣][^.*’]*’', item) else item
+
   def leave_synonym(self, item : str) -> str:
     """If the definition of word consists of synonym, leave the synonym and delete others"""
     if '→' in item:
@@ -109,29 +114,18 @@ class ReviseDef(CleanWord):
       synonym_list = re.findall('‘.*’', item)
       if len(synonym_list) > 0:
         item = '→ ' + re.sub('[‘’]', '', synonym_list[0])
-      
+
     return item
-  
-  def del_hyphen(self, item: str) -> str:
-    """Delete hyphens in a string(except hyphens surrounded with '‘’')"""
-    item = list(item)
-    for idx in np.where(np.array(item) == '-')[0]:
-      if item[max(idx-1, 0)] != '‘':
-        item[idx] = ''
-    return ''.join(item)
-  
+
   def run(self, item : str) -> str:
     """Delete all the unneccessary marks in word definition"""
-    without_chinese = self.del_chinese_bracket(item)
-    without_english = self.del_english(without_chinese)
-    without_numbering = self.del_numbering(without_english)
-    without_marks = re.sub('</?(FL|sub|sup|equ|sp_?no|each_sense_no|span|img|ptrn ?no|DR)[^>]*>', '', without_numbering)
-    without_hyphen = self.del_hyphen(without_marks)
-    without_roman = self.roman_bracket.sub('', without_hyphen)
-    without_etc = re.sub('또는 ?그런 ?것\.?', '', without_roman)
+    tokens, rep_indice = self.find_rep(item)
+    revised = ''.join([self.revise_rep(t) if i in rep_indice else self.revise_else(t) for i, t in enumerate(tokens)])
+    without_marks = re.sub('</?(FL|sub|sup|equ|sp_?no|each_sense_no|span|img|ptrn ?no|DR)[^>]*>', '', revised)
+    without_etc = re.sub('또는 ?그런 ?것\.?', '', without_marks)
     without_broken = re.sub(' ‘[^’]*\.$|_', '', without_etc)
     output = self.leave_synonym(without_broken)
-
+    
     return self.del_space(re.split('<동의 (속담|관용구)>', output)[0])
 
 
