@@ -62,7 +62,6 @@ class Options:
       
 class CleanWord:
   """Delete unneccessary marks in a word
-
   Attributes:
     chinese_rx : the regular expression of Chinese letters
     blank_chinese : the regular expression of 'blank' in Chinese letters
@@ -74,6 +73,7 @@ class CleanWord:
     self.katakana_middle = katakana_middle
     self.roman_bracket = roman_bracket
     self.ch_with_bracket = re.compile('[\(\[]' + build_rx(chinese_unicode) + '+[\)\]]', re.UNICODE)
+    self.roman_bracket = roman_bracket
   
   def del_chinese(self, item : str) -> str:
     """Delete the Chinese letters and empty brackets (e.g. '[]', '()')"""
@@ -97,10 +97,11 @@ class CleanWord:
     """
     word = unicodedata.normalize('NFC', word)
     without_chinese = self.blank_chinese.sub(' ', self.del_chinese(word))
-    without_underbar = re.sub('_', ' ', without_chinese)
-    without_katakana = self.katakana_middle.sub('ㆍ', without_underbar)    
+    without_katakana = self.katakana_middle.sub('ㆍ', without_chinese)   
+    without_roman = self.roman_bracket.sub('', without_katakana)
+    without_numbering = re.sub('[\[「]]?[0-9]+[\]」]?', '', without_roman)
     
-    return re.sub('[\.,0-9\-]', '', without_katakana)
+    return re.sub('[\.,\-_]', without_numbering)
 
 
 class FilterWord:
