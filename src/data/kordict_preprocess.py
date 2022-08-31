@@ -5,6 +5,7 @@ from cached_property import cached_property
 from typing import List, Dict, Optional, Union
 from tqdm import tqdm
 import numpy as np
+from boltons.iterutils import pairwise
 
       
 class ReviseRep(CleanWord):
