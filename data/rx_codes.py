@@ -27,7 +27,7 @@ chinese_unicode = [('\u31c0', '\u31ef'),
 
 roman_num = [('\u2160', '\u217f')]
 line_pattern = '\"[^"]+"|\'[^\']+\''
-indirect_pattern = ' ?((이?라|하)?[고|며|면서]|[라란] |하[는니였]|[한하](다| ?뒤))'
+indirect_pattern = ' ?((이?라|하)?[고|며|면서]|[라란] |하[는니였]|[한하](다| ?뒤)|할 )'
 
 old_kor_rx = re.compile('.*' + build_rx(old_korean_unicode), re.UNICODE)
 chinese_rx = re.compile('[\[\(]?' + build_rx(chinese_unicode) + '[\]\)]?', re.UNICODE)
