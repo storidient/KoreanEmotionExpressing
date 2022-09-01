@@ -13,9 +13,9 @@ def del_zeros(input_list : List[str]) -> List[str]:
 
 def prevent_rx(input: str) -> str:
   #Prevent regex error
-  output = re.sub('\]', '\]', re.sub('\[', '\[', input))#Prevent regex error
-  output = re.sub('\)', '\)', re.sub('\(', '\(', output))#Prevent regex error
-  return re.sub('\?', '\?', output)
+  for m in ['\[', '\]', '\.', '\!', '\?', '\^', '\(', '\)', '\-']:
+    input = re.sub(m, m, input)
+  return input
 
 def list2str(input : List[Dict[str, str]]) -> str:
   """Split a string in a list and delete the overlapped items """
