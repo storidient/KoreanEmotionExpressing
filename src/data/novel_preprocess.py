@@ -6,7 +6,7 @@ from cached_property import cached_property
 from boltons.iterutils import pairwise
 from tqdm import tqdm
 from toolz import partition
-
+from itertools import product
 from src.data.utils import del_zeros
 from data.rx_codes import line_rx, end_rx, indirect_rx, after_indirect_rx
 
