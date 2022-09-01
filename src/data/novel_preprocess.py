@@ -89,6 +89,10 @@ class QuotationChanger:
       elif ',' in x and  x.find(',') < x.find('"'):
         self.output[idx] = x.replace('"', '', 1).replace(', ', ', "', 1)
       
+      elif '하면서' in x and x.find('하면서') < x.find('"'):
+        revised = x.replace('"', '', 1).replace('하면서' , '"하면서', 1)
+        self.output[idx] = '"' + re.sub('\!"', '', revised)
+
       else:
         self.output[idx] = '"' + x.replace('"', '', 1)
 
