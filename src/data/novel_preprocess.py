@@ -120,14 +120,13 @@ class LineChanger:
     return set([s for d, s in product(double, 
                                       single) if d[0] < s[0] and s[-1] < d[-1]])
     
-  def _emphasis(self, s : int, e: int) -> bool:
-    """Decide whether this is a stressed phrase, not a line"""
-    target, front = self.input[s:e+1], self.input[:s]
-
+  def _emphasis(self, s : int, e: int, input : Optional[str] = None) -> bool:
+    """Decide whether this is a stressed phrase or word, not a line(e.g. the 'cute' dog)"""
+    text = self.input if input == None else input
+    target, front = text[s:e+1], text[:s]
     a = len(target.split(' ')) < 4 #less than four word
     b = len(self.end.findall(target)) == 0 #no end marks inside the token
     c = not bool(re.fullmatch('.*[\.\?\!] *', front)) if len(front) > 0 else True #no end marks in the token
-
     return not (a and b and c) #emphasis -> False -> filtered
 
   @cached_property
@@ -153,13 +152,12 @@ class LineChanger:
     return del_zeros(output)
   
   def _merge(self, input : List[str]) -> List[str]:
-    """Merge a line with lines behind it"""
+    """Merge lines to generate indirect quotation sentence"""
     output = list()
     while len(input) >= 2:#if one is a line, the other should not be a line
       now = bool(re.match('[\'\"]', input[0][-1]))
       next = bool(re.match('[\'\"]', input[1][0]))
       end = not bool(self.end.match(input[0][-1]))
-
       if (now != next) and end:
         input = [' '.join(input[:2])] + input[2:]
         
@@ -174,17 +172,15 @@ class LineChanger:
     """Decide whether this is an indirect quotation"""
     target = text[s:e]
     front, back = text[:s], text[e:]
-
     a = bool(self.indirect.match(back))#with a quotation eomi/josa
     b = bool(re.match('[^ 때]+[\.\?\!]', back))#followed by one word
     c = len(self.end.findall(target)) == 0#there are no end marks
     d = not bool(self.line_rx.match(back))#not followed by a line
-
     return not ((a or b or c) and d) #indirect -> False -> filtered
 
   def _revise(self, token):
     double = self._target('"', token)
-    single = list(filter(lambda x :self._emphasis(x[0], x[1]), self._target("'", token)))      
+    single = list(filter(lambda x :self._emphasis(x[0], x[1], token), self._target("'", token)))      
     total = set(double + single) #a list of tuple
     if len(double) > 0 and len(single) > 0: #to avoid being overlapped
       total -= set(self._avoid(double, single))
@@ -192,7 +188,6 @@ class LineChanger:
     target = [[s, e+1] for s, e in sorted(total, key = lambda x: x[0])]
     filtered = list(filter(lambda x: self._indirect(x[0], x[1], token), target))
     filtered = sorted(sum(filtered, []) + [0, len(token)]) #to cover start to end
-
     return [token[s:e] for s,e in pairwise(filtered) if len(token[s:e]) > 0]
   
   def _build(self):
