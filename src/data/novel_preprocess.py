@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 import re
-from typing import List, Any, Tuple
+from typing import List, Any, Tuple, Optional
 from cached_property import cached_property
 from boltons.iterutils import pairwise
 from tqdm import tqdm
