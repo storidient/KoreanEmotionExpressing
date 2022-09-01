@@ -135,8 +135,8 @@ class LineChanger:
       targets -= set(self._avoid(double, single))
 
     token_indices = sum([[a, b+1] for a, b in sorted(targets, key = lambda x: x[0])], [])
-    tokens = [self.input[s:e] for s,e in pairwise(token_indices) if len(self.input[s:e]) > 0]
-    
+    token_indices += [0, len(self.input)]
+    tokens = [self.input[s:e] for s,e in pairwise(sorted(token_indices)) if len(self.input[s:e]) > 0]  
     return tokens
 
   def _split(self, item : str) -> List[str]:
@@ -154,12 +154,19 @@ class LineChanger:
     """Merge lines including indirect quotations, which should not be split by end marks"""
     for idx, token in enumerate(self.output):
       if idx == len(self.output) - 1 or not self.line_rx.match(token): pass
+      elif self.line_rx.match(self.output[idx +1]): pass
+
       elif self.indirect.match(self.output[idx + 1]):
         self.output[idx] += ' ' + self.output[idx +1]
         self.output[idx + 1] = ''
       
       elif len(self.output[idx+1].split(' ')) == 1 and self.end.match(self.output[idx+1][-1]):
         if '때' not in self.output[idx +1]:
+          self.output[idx] += ' ' + self.output[idx + 1]
+          self.output[idx + 1] = ''
+
+      elif re.match("'[^']+'", token):
+        if len(token.split(' ')) < 4 and len(self.end.findall(token)) < 1:
           self.output[idx] += ' ' + self.output[idx + 1]
           self.output[idx + 1] = ''
 
