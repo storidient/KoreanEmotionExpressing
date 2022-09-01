@@ -106,86 +106,97 @@ class QuotationChanger:
 class LineChanger:
   def __init__(self, input : str):
     self.input = input
-    self.line_rx, self.end, self.indirect, self.after_indirect = line_rx, end_rx, indirect_rx, after_indirect_rx
-    self.tokens = self._find()
+    self.line_rx, self.end, self.indirect, self.after_indirect = line_rx, end_rx, indirect_rx, after_indirect_rx 
     self.output = self._build()
-    self._merge_behind()
-    self._merge_front()
-  
-  def _get_target(self, 
-                  text : str, 
-                  mark : str) -> List[str]:
+    
+  def _target(self, mark : str, input : Optional[str] = None) -> List[str]:
     """Get the pairs of the quotation marks' indice"""
+    text = self.input if input == None else input  
     indice = np.where(np.array(list(text)) == mark)[0]#find all the indices
     return list(partition(2, indice))#return them in pairs
   
-  def _avoid(self, double : List[Tuple[int]], single : List[Tuple[int]]):
-    return [s for d, s in product(double, single) if set(range(s[0], s[-1])).issubset(set(range(d[0], d[-1])))]
+  def _avoid(self, double : List[Tuple[Any]], single : List[Tuple[Any]]):
+    """Delete the overlapped indice pairs"""
+    return set([s for d, s in product(double, 
+                                      single) if d[0] < s[0] and s[-1] < d[-1]])
     
-  def _find(self) -> List[str]:
-    """Return the parts of text split by " and ' 
-    (e.g. 'I was tired. "I wanna go home." I fell asleep.
-          -> ['I was tired', '"I wanna go home."', 'I fell asleep.'])
-    """
-    double = self._get_target(self.input, '"')
-    single = self._get_target(self.input, "'")
-    targets = set(double + single)
+  def _emphasis(self, s : int, e: int) -> bool:
+    """Decide whether this is a stressed phrase, not a line"""
+    target, front = self.input[s:e+1], self.input[:s]
 
-    if len(double) > 0 and len(single) > 0:
-      targets -= set(self._avoid(double, single))
+    a = len(target.split(' ')) < 4 #less than four word
+    b = len(self.end.findall(target)) == 0 #no end marks inside the token
+    c = not bool(re.fullmatch('.*[\.\?\!] *', front)) if len(front) > 0 else True #no end marks in the token
 
-    token_indices = sum([[a, b+1] for a, b in sorted(targets, key = lambda x: x[0])], [])
-    token_indices += [0, len(self.input)]
-    tokens = [self.input[s:e] for s,e in pairwise(sorted(token_indices)) if len(self.input[s:e]) > 0]  
-    return tokens
+    return not (a and b and c) #emphasis -> False -> filtered
+
+  @cached_property
+  def tokens(self) -> List[str]:
+    """Return the parts of text split by " and ' """
+    double = self._target('"')
+    single = list(filter(lambda x :self._emphasis(x[0], x[1]), self._target("'")))      
+    
+    total = set(double + single) #a list of tuple
+    if len(double) > 0 and len(single) > 0: #to avoid being overlapped
+      total -= set(self._avoid(double, single))
+
+    target = [[s, e+1] for s, e in sorted(total, key = lambda x: x[0])]
+    target = sorted(sum(target, []) + [0, len(self.input)]) #to cover start to end
+    return [self.input[s:e] for s,e in pairwise(target) if len(self.input[s:e]) > 0]
 
   def _split(self, item : str) -> List[str]:
     """Split items by the end marks(.?!)"""
     item = item.strip(' ')
-    indices = [min(i+1, len(item)+1) for i, x in enumerate(item) if self.end.match(x)]
-    output = [item[s:e] for s, e in pairwise(sorted([0, len(item)+1] + indices))]
+    l = len(item)
+    indices = [min(i+1, len(item)+1) for i, x in enumerate(item) if self.end.match(x) and '-' != item[min(i+1, l-1)]]
+    output = [item[s:e] for s, e in pairwise(sorted([0, l+1] + indices))]
     return del_zeros(output)
+  
+  def _merge(self, input : List[str]) -> List[str]:
+    """Merge a line with lines behind it"""
+    output = list()
+    while len(input) >= 2:#if one is a line, the other should not be a line
+      now = bool(re.match('[\'\"]', input[0][-1]))
+      next = bool(re.match('[\'\"]', input[1][0]))
+      end = not bool(self.end.match(input[0][-1]))
 
+      if (now != next) and end:
+        input = [' '.join(input[:2])] + input[2:]
+        
+      else:
+        output.append(input[0])
+        input = input[1:]
+    
+    output += input
+    return output 
+
+  def _indirect(self, s : int, e : int, text : str) -> bool:
+    """Decide whether this is an indirect quotation"""
+    target = text[s:e]
+    front, back = text[:s], text[e:]
+
+    a = bool(self.indirect.match(back))#with a quotation eomi/josa
+    b = bool(re.match('[^ 때]+[\.\?\!]', back))#followed by one word
+    c = len(self.end.findall(target)) == 0#there are no end marks
+    d = not bool(self.line_rx.match(back))#not followed by a line
+
+    return not ((a or b or c) and d) #indirect -> False -> filtered
+
+  def _revise(self, token):
+    double = self._target('"', token)
+    single = list(filter(lambda x :self._emphasis(x[0], x[1]), self._target("'", token)))      
+    total = set(double + single) #a list of tuple
+    if len(double) > 0 and len(single) > 0: #to avoid being overlapped
+      total -= set(self._avoid(double, single))
+    
+    target = [[s, e+1] for s, e in sorted(total, key = lambda x: x[0])]
+    filtered = list(filter(lambda x: self._indirect(x[0], x[1], token), target))
+    filtered = sorted(sum(filtered, []) + [0, len(token)]) #to cover start to end
+
+    return [token[s:e] for s,e in pairwise(filtered) if len(token[s:e]) > 0]
+  
   def _build(self):
     """Return the lines split by end marks"""
-    return sum([[t] if self.line_rx.match(t) else self._split(t) for i, t in enumerate(self.tokens)],[])
-  
-  def _merge_behind(self):
-    """Merge lines including indirect quotations, which should not be split by end marks"""
-    for idx, token in enumerate(self.output):
-      if idx == len(self.output) - 1 or not self.line_rx.match(token): pass
-      elif self.line_rx.match(self.output[idx +1]): pass
-
-      elif self.indirect.match(self.output[idx + 1]):
-        self.output[idx] += ' ' + self.output[idx +1]
-        self.output[idx + 1] = ''
-      
-      elif len(self.output[idx+1].split(' ')) == 1 and self.end.match(self.output[idx+1][-1]):
-        if '때' not in self.output[idx +1]:
-          self.output[idx] += ' ' + self.output[idx + 1]
-          self.output[idx + 1] = ''
-
-      elif re.match("'[^']+'", token):
-        if len(token.split(' ')) < 4 and len(self.end.findall(token)) < 1:
-          self.output[idx] += ' ' + self.output[idx + 1]
-          self.output[idx + 1] = ''
-
-    self.output = del_zeros(self.output)
-
-  def _merge_front(self):
-    """Merge lines including indirect quotations, which should not be split by end marks"""
-    for idx, token in enumerate(self.output):
-      if idx == len(self.output) - 1 or self.line_rx.match(token): pass
-      elif not self.after_indirect.match(self.output[idx + 1]): pass
-      elif len(token) == 0: pass
-      elif not self.end.match(token[-1]):
-        self.output[idx] += ' ' + self.output[idx +1]
-        self.output[idx + 1] = ''
-
-    self.output = del_zeros(self.output)
-  
-  def __getitem__(self, idx):
-    return self.output[idx]
-  
-  def __len__(self):
-    return len(self.output)
+    divided = sum([[t] if self.line_rx.match(t) else self._split(t) for t in self.tokens],[])
+    merged = del_zeros(self._merge(divided))
+    return sum(list(map(self._revise, merged)),[])
