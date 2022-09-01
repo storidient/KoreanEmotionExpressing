@@ -194,4 +194,4 @@ class LineChanger:
     """Return the lines split by end marks"""
     divided = sum([[t] if self.line_rx.match(t) else self._split(t) for t in self.tokens],[])
     merged = del_zeros(self._merge(divided))
-    return sum(list(map(self._revise, merged)),[])
+    return del_zeros(sum(list(map(self._revise, merged)),[]))
