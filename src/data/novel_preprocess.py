@@ -1,12 +1,13 @@
 import pandas as pd
 import numpy as np
 import re
-from typing import List
+from typing import List, Any, Tuple
 from cached_property import cached_property
 from boltons.iterutils import pairwise
 from tqdm import tqdm
 from toolz import partition
 from itertools import product
+
 from src.data.utils import del_zeros
 from data.rx_codes import line_rx, end_rx, indirect_rx, after_indirect_rx
 
@@ -97,6 +98,7 @@ class QuotationChanger:
   def __len__(self):
     return len(self.output)
 
+  
 class LineChanger:
   def __init__(self, input : str):
     self.input = input
@@ -112,16 +114,25 @@ class LineChanger:
     """Get the pairs of the quotation marks' indice"""
     indice = np.where(np.array(list(text)) == mark)[0]#find all the indices
     return list(partition(2, indice))#return them in pairs
-
+  
+  def _avoid(self, double : List[Tuple[int]], single : List[Tuple[int]]):
+    return [s for d, s in product(double, single) if set(range(s[0], s[-1])).issubset(set(range(d[0], d[-1])))]
+    
   def _find(self) -> List[str]:
     """Return the parts of text split by " and ' 
     (e.g. 'I was tired. "I wanna go home." I fell asleep.
           -> ['I was tired', '"I wanna go home."', 'I fell asleep.'])
     """
-    targets = self._get_target(self.input, '"') + self._get_target(self.input, "'")
-    targets = sorted(targets, key = lambda x: x[0])#the pairs of indices
-    token_indices = sum([[a, b+1] for a, b in targets], [])
+    double = self._get_target(self.input, '"')
+    single = self._get_target(self.input, "'")
+    targets = set(double + single)
+
+    if len(double) > 0 and len(single) > 0:
+      targets -= set(self._avoid(double, single))
+
+    token_indices = sum([[a, b+1] for a, b in sorted(targets, key = lambda x: x[0])], [])
     tokens = [self.input[s:e] for s,e in pairwise(token_indices) if len(self.input[s:e]) > 0]
+    
     return tokens
 
   def _split(self, item : str) -> List[str]:
@@ -138,8 +149,8 @@ class LineChanger:
   def _merge_behind(self):
     """Merge lines including indirect quotations, which should not be split by end marks"""
     for idx, token in enumerate(self.output):
-      if idx == len(self.output) - 1 or not self.line_rx.match(token):pass
-      elif self.after_indirect.match(self.output[idx + 1]):
+      if idx == len(self.output) - 1 or not self.line_rx.match(token): pass
+      elif self.indirect.match(self.output[idx + 1]):
         self.output[idx] += ' ' + self.output[idx +1]
         self.output[idx + 1] = ''
       
@@ -154,7 +165,7 @@ class LineChanger:
     """Merge lines including indirect quotations, which should not be split by end marks"""
     for idx, token in enumerate(self.output):
       if idx == len(self.output) - 1 or self.line_rx.match(token): pass
-      elif not self.indirect.match(self.output[idx + 1]): pass
+      elif not self.after_indirect.match(self.output[idx + 1]): pass
       elif len(token) == 0: pass
       elif not self.end.match(token[-1]):
         self.output[idx] += ' ' + self.output[idx +1]
