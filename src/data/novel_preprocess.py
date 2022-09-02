@@ -18,7 +18,6 @@ class QuotationChanger:
     self.input, self.up_to, self.step = input, up_to, 1
     self.output = list() + self.input
     self._build()
-    self._relocate_q()
   
   def other_mark(self):
     """ if self.mark is ", the other mark is ' """
@@ -80,21 +79,6 @@ class QuotationChanger:
     for m in ['"', "'"]:
       self.mark = m
       self._force_q()
-
-  def _relocate_q(self):
-    """Revise incorrectly located quotation marks"""
-    for idx, x in enumerate(self.output):
-      if not re.match('.*\" ?[\.\?\,\!]', x): pass
-
-      elif ',' in x and  x.find(',') < x.find('"'):
-        self.output[idx] = x.replace('"', '', 1).replace(', ', ', "', 1)
-      
-      elif '하면서' in x and x.find('하면서') < x.find('"'):
-        revised = x.replace('"', '', 1).replace('하면서' , '"하면서', 1)
-        self.output[idx] = '"' + re.sub('\!"', '', revised)
-
-      else:
-        self.output[idx] = '"' + x.replace('"', '', 1)
 
   def __getitem__(self, idx):
     return self.output[idx]
