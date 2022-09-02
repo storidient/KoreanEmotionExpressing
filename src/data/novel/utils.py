@@ -6,7 +6,6 @@ from cached_property import cached_property
 
 class WikiNovel:
   """Download novels from ko.wikisource
-
   Attributes:
     wiki : the url of ko.wikisource
     url: the url of the novel 
@@ -39,9 +38,12 @@ class WikiNovel:
   
   def _get_parts(self, soup : List[Any]):
     """Get paragraphs from the soup"""
-    indice = [idx for idx, t in enumerate(soup) if not str(t).startswith('<p>')]
-    indice = sorted(indice + [0, len(soup)])
-    parts = [list(soup)[s:e] for s,e in pairwise(indice)] #slice with the indices
+    inside_box =  soup.find('div', 'prose')
+    input = inside_box if inside_box != None else soup
+    
+    indice = [idx for idx, t in enumerate(input) if not str(t).startswith('<p>')]
+    indice = sorted(indice + [0, len(input)])
+    parts = [list(input)[s:e] for s,e in pairwise(indice)] #slice with the indices
     filtered = list(map(lambda x : self._get_p(x), parts)) #leave only <p>
     return [_ for _ in filtered if len(_) > 0]
   
