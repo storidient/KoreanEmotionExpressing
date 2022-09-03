@@ -26,7 +26,7 @@ class Brackets:
   b_middle_b = B('〔', '〕')
   b_big = B('{', '}')
   b_sickle = B('「', '」')
-  b_double_sicke = B('『','』')
+  b_double_sickle = B('『','』')
   b_double_inequal = B('《', '》')
 
   @classmethod
