@@ -104,7 +104,6 @@ class RxCodes:
     self.b_end = '[' + ''.join(Brackets.ends()) + ']'
     self.blank_chinese = self.build_rx('[\u3000]')
     self.katakan_middle = self.build_rx('[\u30fb]')
-    self.b_wrong = B('&lt;', '&gt;')
     self.quotation = '[“”"]'
     self.apostrophe = '[‘’\']'
     self.are_a = '[ㆍ]'
