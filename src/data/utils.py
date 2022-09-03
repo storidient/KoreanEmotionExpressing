@@ -115,6 +115,7 @@ class RxCodes:
     self.number = '[0-9]'
     self.imperfect = '[ㄱ-ㅎㅏ-ㅣ]'
     self.sickles = '[' + ''.join(np.concatenate([[v.start, v.end] for v in Brackets.search('sickle')])) + ']'
+    self.inequals = '[' + ''.join(np.concatenate([[v.start, v.end] for v in Brackets.search('inequal')])) + ']'
    
   @staticmethod
   def rx_string(unicode_list : List[Tuple[str, str]]) -> str:
