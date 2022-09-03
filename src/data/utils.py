@@ -28,7 +28,6 @@ class Brackets:
   b_sickle = B('「', '」')
   b_double_sicke = B('『','』')
   b_double_inequal = B('《', '》')
-  b_wrong = B('&lt;', '&gt;')
 
   @classmethod
   def search(cls, mark_name):
@@ -105,6 +104,7 @@ class RxCodes:
     self.b_end = '[' + ''.join(Brackets.ends()) + ']'
     self.blank_chinese = self.build_rx('[\u3000]')
     self.katakan_middle = self.build_rx('[\u30fb]')
+    self.b_wrong = B('&lt;', '&gt;')
     self.quotation = '[“”"]'
     self.apostrophe = '[‘’\']'
     self.are_a = '[ㆍ]'
