@@ -107,7 +107,7 @@ class RxCodes:
     self.quotation = '[“”"]'
     self.apostrophe = '[‘’\']'
     self.are_a = '[ㆍ]'
-    self.hyphen = '[─ㅡ⎯―\-]'
+    self.hyphen = '[─ㅡ⎯―\-ㅡ]'
     self.ellipsis = '\.\.\.+|‥+|…|⋯'
     self.english = '[A-Za-z]'
     self.html = '</?(a|a href|FL|img|ptrn|DR|sub|sup|equ|sp_|each_|span|br/?)([ =][^>]*)*>'
