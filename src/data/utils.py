@@ -1,4 +1,4 @@
-import re
+import re, unicodedata
 from typing import List, Tuple, Union, Optional
 from attr import define
 from cached_property import cached_property
@@ -156,3 +156,66 @@ class RxCodes:
 
     else:
       return None
+  
+  
+class CleanStr:
+  rx = RxCodes()
+  
+  @classmethod
+  def del_space(cls, item : str) -> str:
+    """Delete unneccessary spaces in a word"""
+    return re.sub(' +', ' ', item.strip())
+  
+  @classmethod
+  def clear_html(cls, line : str):
+    revised = re.sub(u'\xa0', ' ', re.sub('\n', ' ', line))
+    output = re.sub('&gt;', "'", re.sub('&lt;', "'", revised))
+    return cls.rx.html_rx.sub('', output)
+  
+  @classmethod
+  def del_chinese(cls, line : str, extent : str = 'all'):
+    output = cls.del_space(cls.rx.blank_chinese_rx.sub(' ', line))
+    if extent == 'all':
+      return cls.rx.chinese_all.sub('', output)
+
+    else:
+      return cls.rx.chinese_bracket.sub('', output) if extent == 'bracket' else output
+  
+  @classmethod
+  def del_english(cls, line : str, extent : str = 'bracket'):
+    if extent == 'all':
+      return cls.rx.english_all.sub('', line)
+
+    else:
+      return cls.rx.english_bracket.sub('', line) if extent == 'bracket' else line
+  
+  @classmethod
+  def del_imperfect(cls, line : str, extent : str = 'bracket'):
+    if extent == 'all':
+      return cls.rx.imperfect_all.sub('', line) 
+
+    else:
+      return cls.rx.imperfect_bracket.sub('', line) if extent == 'bracket' else line
+
+  @classmethod
+  def unify(cls, line, middle : bool = True, hyphen : bool = True,
+            ellipsis : bool = True, quotation : bool = True, apostrophe : bool = True):
+    """Unify different marks"""
+    line = cls.rx.katakana_middle_rx.sub(cls.rx.are_a, line)
+    
+    if middle == True:
+      line = cls.rx.are_a_rx.sub(',', line)
+    
+    if hyphen == True:
+      line = cls.rx.build_rx([cls.rx.hyphen, '+']).sub('-', line)
+    
+    if ellipsis == True:
+      line = cls.rx.ellipsis_rx.sub('⋯', line)
+
+    if quotation == True:
+      line = cls.rx.quotation_rx.sub('"', line)
+      
+    if apostrophe == True:
+      line = cls.rx.apostrophe_rx.sub("'", line)
+      
+    return line
