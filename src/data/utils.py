@@ -110,7 +110,8 @@ class RxCodes:
     self.hyphen = '[─ㅡ⎯―\-]'
     self.ellipsis = '\.\.\.+|‥+|…|⋯'
     self.english = '[A-Za-z]'
-
+    self.html = '</?(a|a href|FL|img|ptrn|DR|sub|sup|equ|sp_|each_|span|br/?)([ =][^>]*)*>'
+   
   @staticmethod
   def rx_string(unicode_list : List[Tuple[str, str]]) -> str:
     """Return regular expression string"""
