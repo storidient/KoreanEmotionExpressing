@@ -6,6 +6,7 @@ from cached_property import cached_property
 from src.data.utils import CleanStr
 import numpy as np
 
+
 class WikiNovel:
   """Download novels from ko.wikisource
   Attributes:
@@ -53,6 +54,7 @@ class WikiNovel:
     soup = self._download()
     return list() if soup == None else self._get_parts(soup)
 
+  
  class CleanLine(CleanStr):
   def __init__(self, input : List[List[str]]):
     self.input = input
