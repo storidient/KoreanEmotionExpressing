@@ -39,7 +39,7 @@ class Brackets:
       return result
     else:
       return list(result.values())[0]
-  
+    
   @classmethod
   def ends(cls):
     return [v.end for k,v in cls.__dict__.items() if k.startswith('b')]
@@ -55,7 +55,7 @@ class Brackets:
   
   @classmethod
   def get_start(cls, end):
-    output = [cls.start()[idx] for idx, item in enumerate(cls.end()) if item == end]
+    output = [cls.start()[idx] for idx, item in enumerate(cls.end()) if item == end]    
     return output[0] if len(output) > 0 else None
   
 old_kor_unicode = [('\u3164', '\u318c'),
