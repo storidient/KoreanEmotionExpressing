@@ -1,8 +1,10 @@
 from bs4 import BeautifulSoup
-import requests, re
+import requests, re, unicodedata
 from boltons.iterutils import pairwise
 from typing import List, Any
 from cached_property import cached_property
+from src.data.utils import CleanStr
+import numpy as np
 
 class WikiNovel:
   """Download novels from ko.wikisource
@@ -50,3 +52,52 @@ class WikiNovel:
   def _build(self):
     soup = self._download()
     return list() if soup == None else self._get_parts(soup)
+
+ class CleanLine(CleanStr):
+  def __init__(self, input : List[List[str]]):
+    self.input = input
+    self.left_del = self.rx.build_rx(['['] + self.rx.bracket.starts('\(') +[']'])
+    self.right_del = self.rx.build_rx(['['] + self.rx.bracket.ends('\)') +[']'])
+    self.output = list(map(self._build, input))
+    
+  @cached_property
+  def no_q(self):
+    """Decide whether the text has quotation marks(") or not"""
+    total, output = ''.join(np.concatenate(self.input)), 'only'
+    if len(self.rx.quotation_rx.findall(total)) > 0: pass
+
+    elif len(self.rx.sickles_rx.findall(total)) > 0:
+      output = 'sickles'
+    
+    elif len(self.rx.inequlas_rx.finall(total)) > 0:
+      output = 'inequals'
+
+    return output
+
+  def _change_q(self, line):
+    """Change sickles or inequal marks into quotation marks"""
+    if self.no_q == 'sickles':
+      return  self.rx.sickles_rx.sub('"', line)
+    else:
+      return self.rx.sickles_rx.sub('"', line) if self.no_q == 'inequals' else line
+
+  def _line(self, line):
+    normalized = self.del_space(unicodedata.normalize('NFC', line))
+    old_kor = self.rx.old_kor_all.sub('', normalized) #except Are-a
+    html = self.clear_html(old_kor)
+    ch = self.del_chinese(html)#Delete all Chinese letters
+    en = self.del_english(ch)#Delete English letters inside brackets
+    num = self.rx.number_bracket.sub('', en) #Delete Numbers inside brackets
+    roman = self.rx.roman_num_bracket.sub('', num) #Delete Roman numbers inside brackets
+    
+    unified = self.unify(roman)
+    q_changed = self._change_q(unified)
+    b_removed = self.right_del.sub('>', self.left_del.sub('<', q_changed))
+    
+    return self.del_space(b_removed)
+
+  def _build(self, paragraph):
+    return list(map(self._line, paragraph))
+  
+  def __getitem__(self, idx):
+    return self.output[idx]
