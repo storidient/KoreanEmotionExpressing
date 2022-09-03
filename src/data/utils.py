@@ -102,8 +102,8 @@ class RxCodes:
     self.roman_num = self.rx_string(roman_num_unicode)
     self.b_start = '[' + ''.join(Brackets.starts()) + ']'
     self.b_end = '[' + ''.join(Brackets.ends()) + ']'
-    self.blank_chinese = self.build_rx('[\u3000]')
-    self.katakana_middle = self.build_rx('\u30fb')
+    self.blank_chinese = '\u3000'
+    self.katakana_middle = '\u30fb'
     self.quotation = '[“”"]'
     self.apostrophe = '[‘’\']'
     self.are_a = 'ㆍ'
