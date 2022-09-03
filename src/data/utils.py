@@ -105,7 +105,7 @@ class RxCodes:
     self.imperfect = '[ㄱ-ㅎㅏ-ㅣ]'
     self.sickles = '[' + ''.join(np.concatenate([[v.start, v.end] for v in Brackets.search('sickle')])) + ']'
     self.inequals = '[' + ''.join(np.concatenate([[v.start, v.end] for v in Brackets.search('inequal')])) + ']'
-    self.wrong_q = self.build_rx('[\"\'][^가-힣]*[\.\?\,\!]')
+    self.wrong_q = '[\"\'][^가-힣]*[\.\?\,\!]'
    
   @staticmethod
   def rx_string(unicode_list : List[Tuple[str, str]]) -> str:
