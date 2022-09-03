@@ -3,6 +3,16 @@ from typing import List, Tuple, Union
 from attr import define
 from cached_property import cached_property
 
+def del_zeros(input_list : List[str]) -> List[str]:
+  """Delete empty strings""" 
+  return [_.strip(' ') for _ in input_list if len(_.strip(' ')) > 0]
+
+def prevent_rx(input: str) -> str:
+  #Prevent regex error
+  for m in ['\[', '\]', '\.', '\!', '\?', '\^', '\(', '\)', '\-']:
+    input = re.sub(m, m, input)
+  return input
+
 @define
 class B:
   start : str
