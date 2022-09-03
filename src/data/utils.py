@@ -113,6 +113,7 @@ class RxCodes:
     self.html = '</?(a|a href|FL|img|ptrn|DR|sub|sup|equ|sp_|each_|span|br/?)([ =][^>]*)*>'
     self.number = '[0-9]'
     self.imperfect = '[ㄱ-ㅎㅏ-ㅣ]'
+    self.sickles = '[' + ''.join(np.concatenate([[v.start, v.end] for v in Brackets.search('sickle')])) + ']'
    
   @staticmethod
   def rx_string(unicode_list : List[Tuple[str, str]]) -> str:
