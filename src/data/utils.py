@@ -103,10 +103,10 @@ class RxCodes:
     self.b_start = '[' + ''.join(Brackets.starts()) + ']'
     self.b_end = '[' + ''.join(Brackets.ends()) + ']'
     self.blank_chinese = self.build_rx('[\u3000]')
-    self.katakana_middle = self.build_rx('[\u30fb]')
+    self.katakana_middle = self.build_rx('\u30fb')
     self.quotation = '[“”"]'
     self.apostrophe = '[‘’\']'
-    self.are_a = '[ㆍ]'
+    self.are_a = 'ㆍ'
     self.hyphen = '[─ㅡ⎯―\-ㅡ]'
     self.ellipsis = '\.\.\.+|‥+|…|⋯'
     self.english = '[A-Za-z]'
