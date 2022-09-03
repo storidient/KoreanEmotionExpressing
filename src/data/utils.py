@@ -41,12 +41,14 @@ class Brackets:
       return list(result.values())[0]
     
   @classmethod
-  def ends(cls, name : Optional[str] = None):
-    return [v.end for k,v in cls.__dict__.items() if k.startswith('b') and name not in k]
+  def ends(cls, mark : Optional[str] = None):
+    output = [v.end for k,v in cls.__dict__.items() if k.startswith('b')]
+    return output if mark == None else [x for x in output if mark not in x]
 
   @classmethod
-  def starts(cls, name : Optional[str] = None):
-    return [v.start for k,v in cls.__dict__.items() if k.startswith('b') and name not in k]
+  def starts(cls, mark : Optional[str] = None):
+    output = [v.start for k,v in cls.__dict__.items() if k.startswith('b')]
+    return output if mark == None else [x for x in output if mark not in x]  
   
   @classmethod
   def get_end(cls, start : str):
