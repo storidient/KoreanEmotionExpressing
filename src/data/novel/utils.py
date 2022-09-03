@@ -55,7 +55,7 @@ class WikiNovel:
     return list() if soup == None else self._get_parts(soup)
 
   
- class CleanLine(CleanStr):
+class CleanLine(CleanStr):
   def __init__(self, input : List[List[str]]):
     self.input = input
     self.left_del = self.rx.build_rx(['['] + self.rx.bracket.starts('\(') +[']'])
