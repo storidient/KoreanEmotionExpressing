@@ -36,9 +36,22 @@ class Brackets:
     if len(result) == 0:
       return None
     elif len(result) > 1:
-      return result
+      return result.values()
     else:
       return list(result.values())[0]
+  
+  @classmethod
+  def excldue(cls, mark_name : Union[List[str], str]):
+    if type(mark_name) == list:
+      result = dict()
+      for m in mark_name:
+        for k, v in cls.__dict__.items():
+          if m not in k and k.starswith('b_'):
+            result[k] = v
+      return result.values()
+  
+    else:
+      return {k : v for k, v in cls.__dict__.items() if mark_name not in k and k.starswith('b_')}.values()
     
   @classmethod
   def ends(cls):
@@ -97,6 +110,7 @@ class RxCodes:
     self.are_a = '[ㆍ]'
     self.hyphen = '[─ㅡ⎯―\-]'
     self.ellipsis = '\.\.\.+|‥+|…|⋯'
+    self.english = '[A-Za-z]'
 
   @staticmethod
   def rx_string(unicode_list : List[Tuple[str, str]]) -> str:
