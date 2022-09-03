@@ -28,6 +28,7 @@ class Brackets:
   b_sickle = B('「', '」')
   b_double_sicke = B('『','』')
   b_double_inequal = B('《', '》')
+  b_wrong = B('&lt;', '&gt;')
 
   @classmethod
   def search(cls, mark_name):
