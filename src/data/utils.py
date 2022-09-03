@@ -2,6 +2,7 @@ import re
 from typing import List, Tuple, Union
 from attr import define
 from cached_property import cached_property
+import numpy as np
 
 def del_zeros(input_list : List[str]) -> List[str]:
   """Delete empty strings""" 
