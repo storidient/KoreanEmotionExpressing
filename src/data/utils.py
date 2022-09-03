@@ -1,5 +1,5 @@
 import re
-from typing import List, Tuple, Union
+from typing import List, Tuple, Union, Optional
 from attr import define
 from cached_property import cached_property
 import numpy as np
@@ -31,7 +31,7 @@ class Brackets:
   b_double_inequal = B('《', '》')
 
   @classmethod
-  def search(cls, mark_name):
+  def search(cls, mark_name : str):
     result = {k : v for k,v in cls.__dict__.items() if mark_name in k}
     if len(result) == 0:
       return None
@@ -39,35 +39,22 @@ class Brackets:
       return result.values()
     else:
       return list(result.values())[0]
-  
-  @classmethod
-  def excldue(cls, mark_name : Union[List[str], str]):
-    if type(mark_name) == list:
-      result = dict()
-      for m in mark_name:
-        for k, v in cls.__dict__.items():
-          if m not in k and k.starswith('b_'):
-            result[k] = v
-      return result.values()
-  
-    else:
-      return {k : v for k, v in cls.__dict__.items() if mark_name not in k and k.starswith('b_')}.values()
     
   @classmethod
-  def ends(cls):
-    return [v.end for k,v in cls.__dict__.items() if k.startswith('b')]
+  def ends(cls, name : Optional[str] = None):
+    return [v.end for k,v in cls.__dict__.items() if k.startswith('b') and name not in k]
 
   @classmethod
-  def starts(cls):
-    return [v.start for k,v in cls.__dict__.items() if k.startswith('b')]
+  def starts(cls, name : Optional[str] = None):
+    return [v.start for k,v in cls.__dict__.items() if k.startswith('b') and name not in k]
   
   @classmethod
-  def get_end(cls, start):
+  def get_end(cls, start : str):
     output = [cls.end()[idx] for idx, item in enumerate(cls.start()) if item == start]
     return output[0] if len(output) > 0 else None 
   
   @classmethod
-  def get_start(cls, end):
+  def get_start(cls, end : str):
     output = [cls.start()[idx] for idx, item in enumerate(cls.end()) if item == end]    
     return output[0] if len(output) > 0 else None
   
