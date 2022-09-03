@@ -132,11 +132,19 @@ class RxCodes:
       
     if name.endswith('_all'):
       target = self.search_attr(re.sub('_all', '', name))
-      return self.build_rx([self.b_start,'?',target[0], self.b_end, '?']) if len(target) > 0 else None
-    
+      if len(target) > 0:
+        component = [self.b_start, '?', target[0], '+ ?', target[0],  '*', self.b_end, '?']
+        return self.build_rx(component)
+      else:
+        return None
+
     elif name.endswith('_bracket'):
       target = self.search_attr(re.sub('_bracket', '', name))
-      return self.build_rx([self.b_start,target[0], self.b_end]) if len(target) > 0 else None
+      if len(target) > 0:
+        component = [self.b_start, target[0], '+ ?', target[0],  '*', self.b_end]
+        return self.build_rx(component)
+      else:
+        return None
 
     elif name.endswith('_rx'):
       target = self.search_attr(re.sub('_rx', '', name))
