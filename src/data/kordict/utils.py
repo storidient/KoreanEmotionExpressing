@@ -6,17 +6,6 @@ from typing import List, Dict
 from itertools import product
 import numpy as np
 
-
-def del_zeros(input_list : List[str]) -> List[str]:
-  """Delete empty strings""" 
-  return [_.strip(' ') for _ in input_list if len(_.strip(' ')) > 0]
-
-def prevent_rx(input: str) -> str:
-  #Prevent regex error
-  for m in ['\[', '\]', '\.', '\!', '\?', '\^', '\(', '\)', '\-']:
-    input = re.sub(m, m, input)
-  return input
-
 def list2str(input : List[Dict[str, str]]) -> str:
   """Split a string in a list and delete the overlapped items """
   output = np.concatenate([x.split('/') for x in input])
