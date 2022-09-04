@@ -94,7 +94,7 @@ class RxCodes:
     self.blank_ch, self.katakana_middle, self.are_a ='\u3000', '\u30fb', '\u318D'
     self.html = '</?(' + self._wrap(['a','a href','FL','img', 'ptrn', 'DR', 'sub', 'sup',
                                     'equ','sp_', 'each_', 'span', 'br']) + ')([ =/][^>]*)*>'
-    self.end, self.e_comma = self._wrap(['\.', '\!', '\?']), self._wrap(['\.', '\!', '\?', ','])
+    self.end, self.endwithcomma = self._wrap(['\.', '\!', '\?']), self._wrap(['\.', '\!', '\?', ','])
     self.quotation, self.apostrophe = self._wrap(['“', '”', '"']), self._wrap(['‘', '’',  "'"])
     self.hyphen = self._wrap(['\u2500', '\u3161', '\u23af', '\u2015'. '\-'])
     self.ellipsis = self._wrap(['\.\.\.+', '‥+', '…', '⋯'])
@@ -107,7 +107,7 @@ class RxCodes:
     self.bracket, self.b_start, self.b_end = Brackets, self._wrap(Brackets.starts()), self._wrap(Brackets.ends())
     self.sickles = self._wrap(np.concatenate([[v.start, v.end] for v in Brackets.search('sickle')]))
     self.inequals = self._wrap(np.concatenate([[v.start, v.end] for v in Brackets.search('inequal')]))
-    self.wrong_q = '[\"\'][^가-힣ㄱ-ㅎㅏ-ㅣA-Za-z]*' + self.e_comma
+    self.wrong_q = '[\"\'][^가-힣ㄱ-ㅎㅏ-ㅣA-Za-z]*' + self.endwithcomma
     self.end_eomi = '[요라다까네]'
   
   @staticmethod
