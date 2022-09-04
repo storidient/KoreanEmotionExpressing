@@ -130,12 +130,16 @@ class RxCodes:#TODO
     """Search attributes in this class and return the values"""
     return [v for k, v in self.__dict__.items() if name in k]
  
-  def _add_b(self, input : str):
+  def _add_b(self, input : str, with_all : bool = False):
     """Add brackets to the input, and compile the regex string"""
-    return self.build_rx([self.b_start, '?', input, '+ ?', input,  '*', self.b_end, '?'])
+    target = ''.join([self.b_start, '?', input, '+ ?', input,  '*', self.b_end, '?'])
+    return self.build_rx(self._wrap([target, input])) if with_all == True else self.build_rx(target)
   
   def __getattr__(self, name):
-    target = [v for k, v in self.__dict__.items() if re.sub('_all', '', name) in k]
+    if name.endswith('_all'):
+      target = self._search_attr(re.sub('_all', '', name))
+      return self._add_b(target[0], True) if len(target) > 0 else None
+    
     if name.endswith('_bracket'):
       target = self._search_attr(re.sub('_bracket', '', name))
       return self._add_b(target[0]) if len(target) > 0 else None
@@ -171,32 +175,26 @@ class CleanStr:
   def del_chinese(cls, line : str, extent : str = 'all'):
     """Delete Chinese letters in a line"""
     revised = cls.del_space(cls.rx.blank_ch_rx.sub(' ', line))
-    without_b = cls.rx.chinese_bracket.sub('', revised)
-    if extent == 'bracket':
-      return without_b
-    
+    if extent == 'all':
+      return cls.rx.chinese_all.sub('', revised)
     else:
-      return cls.rx.chinese_rx.sub('', without_b) if extent == 'all' else revised
+      return cls.rx.chinese_bracket.sub('', revised) if extent == 'bracket' else revised
   
   @classmethod
   def del_english(cls, line : str, extent : str = 'bracket'):
     """Delete English letters in a line"""
-    without_b = cls.rx.english_bracket.sub('', line)
-    if extent == 'bracket':
-      return without_b
-    
+    if extent == 'all':
+      return cls.rx.english_all.sub('', line)
     else:
-      return cls.rx.english_rx.sub('', without_b)  if extent == 'all' else line
+      return cls.rx.english_bracket.sub('', line) if extent == 'all' else line
   
   @classmethod
   def del_imperfect(cls, line : str, extent : str = 'bracket'):
     """Delete imperfect Korean letters in a line"""
-    without_b = cls.rx.imperfect_bracket.sub('', line)
-    if extent == 'bracket':
-      return without_b
-    
+    if extent == 'all':
+      return cls.rx.imperfect_all.sub('', line)
     else:
-      return cls.rx.imperfect_rx.sub('', without_b) if extent == 'all' else line
+      return cls.rx.imperfect_bracket.sub('', line) if extent == 'all' else line
   
   @classmethod
   def del_empty_bracket(cls, line: str):
