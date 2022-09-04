@@ -198,7 +198,7 @@ class CleanStr:
   
   @classmethod
   def del_empty_bracket(cls, line: str):
-    return self.rx.build_rx([self.rx.b_start, ' *', self.rx.b_end]).sub('', line)
+    return cls.rx.build_rx([cls.rx.b_start, ' *', cls.rx.b_end]).sub('', line)
   
   @classmethod
   def unify(cls, line, 
