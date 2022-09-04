@@ -88,14 +88,14 @@ class CleanLine(CleanStr):
     old_kor = self.rx.old_kor_all.sub('', normalized) #except Are-a
     html = self.clear_html(old_kor)
     ch = self.del_chinese(html)#Delete all Chinese letters
-    en = self.del_english(ch)#Delete English letters inside brackets
-    num = self.rx.number_bracket.sub('', en) #Delete Numbers inside brackets
+    en = self.del_english(ch) #Delete English letters inside brackets
+    empty = self.del_empty_bracket(en)
+    num = self.rx.number_bracket.sub('', empty) #Delete Numbers inside brackets
     roman = self.rx.roman_num_bracket.sub('', num) #Delete Roman numbers inside brackets
     unified = self.unify(roman)
     q_changed = self._change_q(unified)
     b_removed = self.right_del.sub('>', self.left_del.sub('<', q_changed))
-    output = self.del_space(b_removed)
-    return self.rx.build_rx([self.rx.b_start, ' *', self.rx.b_end]).sub('', output)
+    return self.del_space(b_removed)
   
   def _build(self, paragraph):
     return list(map(self._line, paragraph))
