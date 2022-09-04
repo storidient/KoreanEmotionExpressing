@@ -123,7 +123,7 @@ class RxCodes:
 
   def _wrap(self, input : List[str]):
     """Wrap codes into a regex form"""
-    return '|'.join(input) if len([_ for _ in input if len(re.sub('\\', '', _)) > 1]) > 0 else '[' + ''.join(input) + ']'
+    return '|'.join(input) if len([_ for _ in input if len(_) > 2]) > 0 else '[' + ''.join(input) + ']'
 
   def _search_attr(self, name : str):
     """Search attributes in this class and return the values"""
