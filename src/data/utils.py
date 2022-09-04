@@ -4,6 +4,28 @@ from attr import define
 from cached_property import cached_property
 import numpy as np
 
+
+OLD_KOR_UNICODE = [('\u3164', '\u318c'),
+                   ('\u318e', '\u318f'), 
+                   ('\ua960', '\ua97f'),
+                   ('\ud7b0', '\ud7ff'),
+                   ('\ue000', '\uefff'),
+                   ('\uf000', '\uffff'),
+                   ('\u1113', '\u115f'),
+                   ('\u1176', '\u11a7'),
+                   ('\u11c3', '\u11ff')]
+
+CHINESE_UNICODE = [('\u31c0', '\u31ef'),
+                   ('\u31f0', '\u31ff'),
+                   ('\u3200', '\u32ff'),
+                   ('\u3300', '\u33ff'),
+                   ('\u3400', '\u4dbf'),
+                   ('\u4dc0', '\u4dff'),
+                   ('\u4e00', '\u9fff'),
+                   ('\uf900', '\ufaff')]
+
+ROMAN_NUM_UNICODE = [('\u2160', '\u217f')]
+
 def del_zeros(input_list : List[str]) -> List[str]:
   """Delete empty strings""" 
   return [_.strip(' ') for _ in input_list if len(_.strip(' ')) > 0]
@@ -13,6 +35,7 @@ def prevent_rx(input: str) -> str:
   for m in ['\[', '\]', '\.', '\!', '\?', '\^', '\(', '\)', '\-']:
     input = re.sub(m, m, input)
   return input
+
 
 @define
 class B:
@@ -60,54 +83,33 @@ class Brackets:
     output = [cls.start()[idx] for idx, item in enumerate(cls.end()) if item == end]    
     return output[0] if len(output) > 0 else None
   
-old_kor_unicode = [('\u3164', '\u318c'),
-                   ('\u318e', '\u318f'), 
-                   ('\ua960', '\ua97f'),
-                   ('\ud7b0', '\ud7ff'),
-                   ('\ue000', '\uefff'),
-                   ('\uf000', '\uffff'),
-                   ('\u1113', '\u115f'),
-                   ('\u1176', '\u11a7'),
-                   ('\u11c3', '\u11ff')]
-
-chinese_unicode = [('\u31c0', '\u31ef'),
-                   ('\u31f0', '\u31ff'),
-                   ('\u3200', '\u32ff'),
-                   ('\u3300', '\u33ff'),
-                   ('\u3400', '\u4dbf'),
-                   ('\u4dc0', '\u4dff'),
-                   ('\u4e00', '\u9fff'),
-                   ('\uf900', '\ufaff')]
-
-roman_num_unicode = [('\u2160', '\u217f')]
 
 class RxCodes:
   def __init__(self):
-    self.bracket = Brackets
-    self.line = '\"[^"]+"|\'[^\']+\''
-    self.indirect = ' ?((이?라|하)?[고|며|면서]|[라란] |하[는니였]|[한하](다| ?뒤)|할 )'
-    self.end = '[\.\!\?]'
-    self.chinese = self.rx_string(chinese_unicode)
-    self.old_kor = self.rx_string(old_kor_unicode)
-    self.roman_num = self.rx_string(roman_num_unicode)
-    self.b_start = '[' + ''.join(Brackets.starts()) + ']'
-    self.b_end = '[' + ''.join(Brackets.ends()) + ']'
-    self.blank_chinese = '\u3000'
-    self.katakana_middle = '\u30fb'
-    self.quotation = '[“”"]'
-    self.apostrophe = '[‘’\']'
-    self.are_a = 'ㆍ'
-    self.hyphen = '[─ㅡ⎯―\-ㅡ]'
-    self.ellipsis = '\.\.\.+|‥+|…|⋯'
-    self.english = '[A-Za-z]'
-    self.html = '</?(a|a href|FL|img|ptrn|DR|sub|sup|equ|sp_|each_|span|br/?)([ =][^>]*)*>'
-    self.number = '[0-9]'
-    self.imperfect = '[ㄱ-ㅎㅏ-ㅣ]'
-    self.sickles = '[' + ''.join(np.concatenate([[v.start, v.end] for v in Brackets.search('sickle')])) + ']'
-    self.inequals = '[' + ''.join(np.concatenate([[v.start, v.end] for v in Brackets.search('inequal')])) + ']'
-    self.wrong_q = '[\"\'][^가-힣]*[\.\?\,\!]'
+    """All the Regex strings"""
+    self.english, self.number, self.imperfect = '[A-Za-z]', '[0-9]', '[ㄱ-ㅎㅏ-ㅣ]'
+    self.chinese = self.rx_string(CHINESE_UNICODE)
+    self.old_kor = self.rx_string(OLD_KOR_UNICODE)
+    self.roman_num = self.rx_string(ROMAN_NUM_UNICODE)
+    self.blank_ch, self.katakana_middle, self.are_a ='\u3000', '\u30fb', '\u318D'
+    self.html = '</?(' + self._wrap(['a','a href','FL','img', 'ptrn', 'DR', 'sub', 'sup',
+                                    'equ','sp_', 'each_', 'span', 'br']) + ')([ =/][^>]*)*>'
+    self.end, self.e_comma = self._wrap(['\.', '\!', '\?']), self._wrap(['\.', '\!', '\?', ','])
+    self.quotation, self.apostrophe = self._wrap(['“', '”', '"']), self._wrap(['‘', '’',  "'"])
+    self.hyphen = self._wrap(['\u2500', '\u3161', '\u23af', '\u2015'. '\-'])
+    self.ellipsis = self._wrap(['\.\.\.+', '‥+', '…', '⋯'])
+    self.line = self._wrap(['"[^"]+"', "'[^\']+'"])
+    self.indirect = self._wrap([' ?(이?라|하)?[고|며|면서]',
+                                ' ?[라란] ',
+                                ' ?하([는니] |였?다)',
+                                ' ?할 ',
+                                ' ?한([다 ]| 뒤)'])
+    self.bracket, self.b_start, self.b_end = Brackets, self._wrap(Brackets.starts()), self._wrap(Brackets.ends())
+    self.sickles = self._wrap(np.concatenate([[v.start, v.end] for v in Brackets.search('sickle')]))
+    self.inequals = self._wrap(np.concatenate([[v.start, v.end] for v in Brackets.search('inequal')]))
+    self.wrong_q = '[\"\'][^가-힣ㄱ-ㅎㅏ-ㅣA-Za-z]*' + self.e_comma
     self.end_eomi = '[요라다까네]'
-   
+  
   @staticmethod
   def rx_string(unicode_list : List[Tuple[str, str]]) -> str:
     """Return regular expression string"""
@@ -116,39 +118,34 @@ class RxCodes:
   
   @staticmethod
   def build_rx(rx_str : Union[str, List[str]]):
-    if type(rx_str) == list:
-      rx_str = ''.join(rx_str)
-    return re.compile(rx_str, re.UNICODE)
+    """Compile regular expression string"""
+    return re.compile(''.join(rx_str), re.UNICODE) if type(rx_str) == list else re.compile(rx_str, re.UNICODE)
 
-  def search_attr(self, name):
+  def _wrap(self, input : List[str]):
+    """Wrap codes into a regex form"""
+    return '|'.join(input) if len([_ for _ in input if len(_) > 1]) > 0 else '[' + ''.join(input) + ']'
+
+  def _search_attr(self, name : str):
+    """Search attributes in this class and return the values"""
     return [v for k, v in self.__dict__.items() if name in k]
-
+ 
+  def _add_b(self, input : str):
+    """Add brackets to the input, and compile the regex string"""
+    return self.build_rx([self.b_start, '?', input, '+ ?', input,  '*', self.b_end, '?'])
+  
   def __getattr__(self, name):
     target = [v for k, v in self.__dict__.items() if re.sub('_all', '', name) in k]
-      
     if name.endswith('_all'):
       target = self.search_attr(re.sub('_all', '', name))
-      if len(target) > 0:
-        component = [self.b_start, '?', target[0], '+ ?', target[0],  '*', self.b_end, '?']
-        return self.build_rx(component)
-      else:
-        return None
+      return self._add_b(target[0]) if len(target) > 0 else None
 
     elif name.endswith('_bracket'):
       target = self.search_attr(re.sub('_bracket', '', name))
-      if len(target) > 0:
-        component = [self.b_start, target[0], '+ ?', target[0],  '*', self.b_end]
-        return self.build_rx(component)
-      else:
-        return None
+      return self._add_b(target[0]) if len(target) > 0 else None
 
     elif name.endswith('_rx'):
       target = self.search_attr(re.sub('_rx', '', name))
-      return self.build_rx(target) if len(target) > 0 else None
-    
-    elif name.endswith('_after'):
-      target = self.search_attr(re.sub('_after', '', name))
-      return self.build_rx('.*' + target) if len(target) > 0 else None
+      return self.build_rx(target[0]) if len(target) > 0 else None
 
     elif name.startswith('bracket_'):
       target = re.sub('bracket_', '', name)
@@ -163,18 +160,20 @@ class CleanStr:
   
   @classmethod
   def del_space(cls, item : str) -> str:
-    """Delete unneccessary spaces in a word"""
+    """Delete unneccessary spaces in a line"""
     return re.sub(' +', ' ', item.strip())
   
   @classmethod
   def clear_html(cls, line : str):
+    """Delete html tags in a line"""
     revised = re.sub(u'\xa0', ' ', re.sub('\n', ' ', line))
     output = re.sub('&gt;', "'", re.sub('&lt;', "'", revised))
     return cls.rx.html_rx.sub('', output)
   
   @classmethod
   def del_chinese(cls, line : str, extent : str = 'all'):
-    output = cls.del_space(cls.rx.blank_chinese_rx.sub(' ', line))
+    """Delete Chinese letters in a line"""
+    output = cls.del_space(cls.rx.blank_ch_rx.sub(' ', line))
     if extent == 'all':
       return cls.rx.chinese_all.sub('', output)
 
@@ -183,6 +182,7 @@ class CleanStr:
   
   @classmethod
   def del_english(cls, line : str, extent : str = 'bracket'):
+    """Delete English letters in a line"""
     if extent == 'all':
       return cls.rx.english_all.sub('', line)
 
@@ -191,6 +191,7 @@ class CleanStr:
   
   @classmethod
   def del_imperfect(cls, line : str, extent : str = 'bracket'):
+    """Delete imperfect Korean letters in a line"""
     if extent == 'all':
       return cls.rx.imperfect_all.sub('', line) 
 
@@ -198,24 +199,16 @@ class CleanStr:
       return cls.rx.imperfect_bracket.sub('', line) if extent == 'bracket' else line
 
   @classmethod
-  def unify(cls, line, middle : bool = True, hyphen : bool = True,
-            ellipsis : bool = True, quotation : bool = True, apostrophe : bool = True):
-    """Unify different marks"""
-    line = cls.rx.katakana_middle_rx.sub(cls.rx.are_a, line)
-    
-    if middle == True:
-      line = cls.rx.are_a_rx.sub(',', line)
-    
-    if hyphen == True:
-      line = cls.rx.build_rx([cls.rx.hyphen, '+']).sub('-', line)
-    
-    if ellipsis == True:
-      line = cls.rx.ellipsis_rx.sub('⋯', line)
-
-    if quotation == True:
-      line = cls.rx.quotation_rx.sub('"', line)
-      
-    if apostrophe == True:
-      line = cls.rx.apostrophe_rx.sub("'", line)
-      
-    return line
+  def unify(cls, line, 
+            middle : bool = True, 
+            hyphen : bool = True,
+            ellipsis : bool = True, 
+            quotation : bool = True, 
+            apostrophe : bool = True):
+    """Unify middle, hyphen, ellipsis, quotation, apostrophe marks"""
+    k_unified = cls.rx.katakana_middle_rx.sub(cls.rx.are_a, line)
+    mid_unified = cls.rx.are_a_rx.sub(',', k_unified) if middle == True else k_unified
+    h_unified = cls.rx.build_rx([cls.rx.hyphen, '+']).sub('-', mid_unified) if hyphen == True else mid_unified
+    e_unified = cls.rx.ellipsis_rx.sub('⋯', h_unified) if ellipsis == True else h_unified
+    q_unified = cls.rx.quotation_rx.sub('"', e_unified) if quotation == True else e_unified
+    return cls.rx.apostrophe_rx.sub("'", q_unified) if apostrophe == True else q_unified
