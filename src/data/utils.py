@@ -137,15 +137,15 @@ class RxCodes:
   def __getattr__(self, name):
     target = [v for k, v in self.__dict__.items() if re.sub('_all', '', name) in k]
     if name.endswith('_all'):
-      target = self.search_attr(re.sub('_all', '', name))
+      target = self._search_attr(re.sub('_all', '', name))
       return self._add_b(target[0]) if len(target) > 0 else None
 
     elif name.endswith('_bracket'):
-      target = self.search_attr(re.sub('_bracket', '', name))
+      target = self._search_attr(re.sub('_bracket', '', name))
       return self._add_b(target[0]) if len(target) > 0 else None
 
     elif name.endswith('_rx'):
-      target = self.search_attr(re.sub('_rx', '', name))
+      target = self._search_attr(re.sub('_rx', '', name))
       return self.build_rx(target[0]) if len(target) > 0 else None
 
     elif name.startswith('bracket_'):
