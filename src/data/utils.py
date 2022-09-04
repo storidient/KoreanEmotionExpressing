@@ -136,11 +136,7 @@ class RxCodes:
   
   def __getattr__(self, name):
     target = [v for k, v in self.__dict__.items() if re.sub('_all', '', name) in k]
-    if name.endswith('_all'):
-      target = self._search_attr(re.sub('_all', '', name))
-      return self._add_b(target[0]) if len(target) > 0 else None
-
-    elif name.endswith('_bracket'):
+    if name.endswith('_bracket'):
       target = self._search_attr(re.sub('_bracket', '', name))
       return self._add_b(target[0]) if len(target) > 0 else None
 
@@ -176,8 +172,8 @@ class CleanStr:
     """Delete Chinese letters in a line"""
     output = cls.del_space(cls.rx.blank_ch_rx.sub(' ', line))
     if extent == 'all':
-      return cls.rx.chinese_all.sub('', output)
-
+      return cls.rx.chinese_rx.sub('', output)
+    
     else:
       return cls.rx.chinese_bracket.sub('', output) if extent == 'bracket' else output
   
@@ -185,8 +181,8 @@ class CleanStr:
   def del_english(cls, line : str, extent : str = 'bracket'):
     """Delete English letters in a line"""
     if extent == 'all':
-      return cls.rx.english_all.sub('', line)
-
+      return cls.rx.english_rx.sub('', line)
+    
     else:
       return cls.rx.english_bracket.sub('', line) if extent == 'bracket' else line
   
@@ -194,7 +190,7 @@ class CleanStr:
   def del_imperfect(cls, line : str, extent : str = 'bracket'):
     """Delete imperfect Korean letters in a line"""
     if extent == 'all':
-      return cls.rx.imperfect_all.sub('', line) 
+      return cls.rx.imperfect_rx.sub('', line) 
 
     else:
       return cls.rx.imperfect_bracket.sub('', line) if extent == 'bracket' else line
