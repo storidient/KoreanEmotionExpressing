@@ -194,7 +194,11 @@ class CleanStr:
 
     else:
       return cls.rx.imperfect_bracket.sub('', line) if extent == 'bracket' else line
-
+  
+  @classmethod
+  def del_empty_bracket(cls, line: str):
+    return self.rx.build_rx([self.rx.b_start, ' *', self.rx.b_end]).sub('', line)
+  
   @classmethod
   def unify(cls, line, 
             middle : bool = True, 
