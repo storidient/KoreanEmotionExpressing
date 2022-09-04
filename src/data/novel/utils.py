@@ -95,8 +95,8 @@ class CleanLine(CleanStr):
     q_changed = self._change_q(unified)
     b_removed = self.right_del.sub('>', self.left_del.sub('<', q_changed))
     output = self.del_space(b_removed)
-    return self.rx.build_rx(self.bracket.starts() + [' *'] + self.bracket.ends()).sub('', output) #TODO
-
+    return self.rx.build_rx([self.rx.b_start, ' *', self.rx.b_end]).sub('', output)
+  
   def _build(self, paragraph):
     return list(map(self._line, paragraph))
   
