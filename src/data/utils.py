@@ -26,6 +26,9 @@ CHINESE_UNICODE = [('\u31c0', '\u31ef'),
 
 ROMAN_NUM_UNICODE = [('\u2160', '\u217f')]
 
+JAPANESE_UNICODE = [('\u3040', '\u309F'),
+                    ('\u30A0', '\u30FF')]
+
 def del_zeros(input_list : List[str]) -> List[str]:
   """Delete empty strings""" 
   return [_.strip(' ') for _ in input_list if len(_.strip(' ')) > 0]
@@ -91,6 +94,7 @@ class RxCodes:#TODO
     self.english, self.number, self.imperfect = '[A-Za-z]', '[0-9]', '[ㄱ-ㅎㅏ-ㅣ]'
     self.chinese = self.rx_string(CHINESE_UNICODE)
     self.old_kor = self.rx_string(OLD_KOR_UNICODE)
+    self.japanese = self.rx_string(JAPANESE_UNICODE)
     self.roman_num = self.rx_string(ROMAN_NUM_UNICODE)
     self.blank_ch, self.katakana_middle, self.are_a ='\u3000', '\u30fb', '\u318D'
     self.html = '</?(' + self._wrap(['a','a href','FL','img', 'ptrn', 'DR', 'sub', 'sup',
@@ -187,6 +191,14 @@ class CleanStr:
       return cls.rx.english_all.sub('', line)
     else:
       return cls.rx.english_bracket.sub('', line) if extent == 'bracket' else line
+    
+  @classmethod
+  def del_japanese(cls, line : str, extent : str = 'all'):
+    """Delete Japanese letters in a line"""
+    if extent == 'all':
+      return cls.rx.japanese_all.sub('', line)
+    else:
+      return cls.rx.japanese_bracket.sub('', line) if extent == 'bracket' else line
   
   @classmethod
   def del_imperfect(cls, line : str, extent : str = 'bracket'):
