@@ -132,7 +132,7 @@ class RxCodes:#TODO
  
   def _add_b(self, input : str, with_all : bool = False):
     """Add brackets to the input, and compile the regex string"""
-    target = ''.join([self.b_start, '?', input, '+ ?', input,  '*', self.b_end, '?'])
+    target = ''.join([self.b_start, '?', input, '+[\W_]?', input,  '*', self.b_end, '?'])
     return self.build_rx(self._wrap([target, input])) if with_all == True else self.build_rx(target)
   
   def __getattr__(self, name):
