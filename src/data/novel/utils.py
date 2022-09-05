@@ -88,8 +88,9 @@ class CleanLine(CleanStr):
     old_kor = self.rx.old_kor_all.sub('', normalized) #except Are-a
     html = self.clear_html(old_kor)
     ch = self.del_chinese(html)#Delete all Chinese letters
-    en = self.del_english(ch) #Delete English letters inside brackets
-    empty = self.del_empty_bracket(en)
+    en = self.del_english(ch)#Delete English letters inside brackets
+    jn = self.del_japanese(en)#Delete all Japanese letters
+    empty = self.del_empty_bracket(jn)
     num = self.rx.number_bracket.sub('', empty) #Delete Numbers inside brackets
     roman = self.rx.roman_num_bracket.sub('', num) #Delete Roman numbers inside brackets
     unified = self.unify(roman)
