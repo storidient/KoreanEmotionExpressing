@@ -105,7 +105,7 @@ class RxCodes:#TODO
     self.ellipsis = self._wrap(['\.\.\.+', '‥+', '…', '⋯'])
     self.line = self._wrap(['"[^"]+"', "'[^\']+'"])
     self.indirect = self._wrap([' ?(이?라|하)?[고|며|면서]',
-                                ' ?[라란] ',
+                                ' ?이?[라란] ',
                                 ' ?하([는니] |였?다)',
                                 ' ?할 ',
                                 ' ?한([다 ]| 뒤)'])
