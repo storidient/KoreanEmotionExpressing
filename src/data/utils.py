@@ -186,7 +186,7 @@ class CleanStr:
     if extent == 'all':
       return cls.rx.english_all.sub('', line)
     else:
-      return cls.rx.english_bracket.sub('', line) if extent == 'all' else line
+      return cls.rx.english_bracket.sub('', line) if extent == 'bracket' else line
   
   @classmethod
   def del_imperfect(cls, line : str, extent : str = 'bracket'):
@@ -194,7 +194,7 @@ class CleanStr:
     if extent == 'all':
       return cls.rx.imperfect_all.sub('', line)
     else:
-      return cls.rx.imperfect_bracket.sub('', line) if extent == 'all' else line
+      return cls.rx.imperfect_bracket.sub('', line) if extent == 'bracket' else line
   
   @classmethod
   def del_empty_bracket(cls, line: str):
