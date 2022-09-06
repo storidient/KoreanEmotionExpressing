@@ -106,7 +106,7 @@ class RxCodes:#TODO
     self.line = self._wrap(['"[^"]+"', "'[^\']+'"])
     self.indirect = self._wrap([' ?(이?라|하)?[고|며|면서]',
                                 ' ?이?[라란] ',
-                                ' ?하([는니던] |였?다)',
+                                ' ?하([는니던나] |였?다)',
                                 ' ?할 ',
                                 ' ?한([다 ]| 뒤)'])
     self.bracket, self.b_start, self.b_end = Brackets, self._wrap(Brackets.starts()), self._wrap(Brackets.ends())
