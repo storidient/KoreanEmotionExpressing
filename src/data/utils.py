@@ -104,7 +104,7 @@ class RxCodes:#TODO
     self.hyphen = self._wrap(['\u2500', '\u3161', '\u23af', '\u2015', '\-'])
     self.ellipsis = self._wrap(['\.\.\.+', '‥+', '…', '⋯'])
     self.line = self._wrap(['"[^"]+"', "'[^\']+'"])
-    self.indirect = self._wrap([' ?(이?라|하)?[고|며|면서]',
+    self.indirect = self._wrap([' ?(이?라|하)?(고|며 |면[서은]?)',
                                 ' ?이?[라란] ',
                                 ' ?하([는던나] |였?다|기에?는|여도? |[더자]?니 |자(마자)? )',
                                 ' ?할 ',
