@@ -47,7 +47,7 @@ def prevent_rx(input: str) -> str:
 def build_rx(input : Union[str, List[str]]):
   """Compile regular expression string"""
   if type(input) == list:
-    input = '|'if len(list(filter(lambda x : len(x) > 2 and not x.startswith('\u'), input))) > 0 else '[' + ''.join(input) + ']'
+    input = '|'.join(input) if len(list(filter(lambda x : len(x) > 2 and not x.startswith('\u'), input))) > 0 else '[' + ''.join(input) + ']'
   return re.compile(input, re.UNICODE)
 
 @define
