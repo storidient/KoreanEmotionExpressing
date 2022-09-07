@@ -82,8 +82,8 @@ class CleanStr:
   quotation, apostrophe = '[“”"]', "[‘’']"
   hyphen_rx = '[\u2500\u3161\u23af\u2015\u2014\-]+'
   ellipsis = '\.\.\.+|‥+|…|⋯'
-  b_start = build_rx([v.start for v in Brackets.starts()], False)
-  b_end = build_rx([v.end for v in Brackets.ends()], False)
+  b_start = build_rx(Brackets.starts(), False)
+  b_end = build_rx(Brackets.ends(), False)
   
   @staticmethod
   def del_space(cls, item : str) -> str:
