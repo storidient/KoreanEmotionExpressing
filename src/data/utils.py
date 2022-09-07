@@ -92,7 +92,7 @@ class Brackets:
 class CleanStr:
   blank_ch, katakana_mid, are_a = '\u3000', '\u30fb', '\u318D'
   quotation, apostrophe = '[“”"]', "[‘’']"
-  hyphen_rx = '[\u2500\u3161\u23af\u2015\u2014\-]+'
+  hyphen = '[\u2500\u3161\u23af\u2015\u2014\-]+'
   ellipsis = '\.\.\.+|‥+|…|⋯'
   b_start = build_rx(Brackets.starts(), False)
   b_end = build_rx(Brackets.ends(), False)
