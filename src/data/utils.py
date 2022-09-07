@@ -110,9 +110,6 @@ class RxCodes:#TODO
     self.ellipsis = self._wrap(['\.\.\.+', '‥+', '…', '⋯'])
     self.line = self._wrap(['"[^"]+"', "'[^\']+'"])
     self.bracket, self.b_start, self.b_end = Brackets, self._wrap(Brackets.starts()), self._wrap(Brackets.ends())
-    self.sickles = self._wrap(np.concatenate([[v.start, v.end] for v in Brackets.search('sickle')]))
-    self.inequals = self._wrap(np.concatenate([[v.start, v.end] for v in Brackets.search('inequal')]))
-    self.wrong_q = '\"[^가-힣ㄱ-ㅎㅏ-ㅣA-Za-z]*' + self.endwithcomma + '\"?'
     self.eomi = '[요라다까네야오구]'
   
   @staticmethod
