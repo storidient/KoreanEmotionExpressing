@@ -101,7 +101,7 @@ class RxCodes:#TODO
                                     'equ','sp_', 'each_', 'span', 'br']) + ')([ =/][^>]*)*>'
     self.end, self.endwithcomma = self._wrap(['\.', '\!', '\?']), self._wrap(['\.', '\!', '\?', ','])
     self.quotation, self.apostrophe = self._wrap(['“', '”', '"']), self._wrap(['‘', '’',  "'"])
-    self.hyphen = self._wrap(['\u2500', '\u3161', '\u23af', '\u2015', '\-'])
+    self.hyphen = self._wrap(['\u2500', '\u3161', '\u23af', '\u2015', '\-', '\u2014'])
     self.ellipsis = self._wrap(['\.\.\.+', '‥+', '…', '⋯'])
     self.line = self._wrap(['"[^"]+"', "'[^\']+'"])
     self.indirect = self._wrap([' ?(이?라|하)?(고|며 |면[서은]?)',
