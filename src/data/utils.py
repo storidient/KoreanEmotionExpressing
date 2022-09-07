@@ -112,7 +112,9 @@ class CleanStr:
   @classmethod
   def rx_bracket(cls, rx_str_list : List[str]):
     input = build_rx(rx_str_list, False)
-    return cls.b_start + '[\W_]*' + input + '+[\W_]*' + cls.b_end
+    if len(input) > 0:
+      input += '+'
+    return cls.b_start + '[\W_]*' + input + '[\W_]*' + cls.b_end
   
   @classmethod
   def unify(cls, line : str) -> str:
