@@ -44,11 +44,11 @@ def prevent_rx(input: str) -> str:
     input = re.sub(m, m, input)
   return input
 
-def build_rx(input : Union[str, List[str]]):
+def build_rx(input : Union[str, List[str]], rx : bool = True):
   """Compile regular expression string"""
   if type(input) == list:
-    input = '|'.join(input) if len(list(filter(lambda x : len(x) > 2, input))) > 0 else '[' + ''.join(input) + ']'
-  return re.compile(input, re.UNICODE)
+    input = '(' + '|'.join(input) + ')' if len(list(filter(lambda x : len(x) > 2, input))) > 0 else '[' + ''.join(input) + ']'
+  return re.compile(input, re.UNICODE) if rx == True else input
 
 @define
 class B:
@@ -82,25 +82,32 @@ class CleanStr:
   quotation, apostrophe = '[“”"]', "[‘’']"
   hyphen_rx = '[\u2500\u3161\u23af\u2015\u2014\-]+'
   ellipsis = '\.\.\.+|‥+|…|⋯'
+  b_start = build_rx([v.start for v in Brackets.starts()], False)
+  b_end = build_rx([v.end for v in Brackets.ends()], False)
   
-  @classmethod
+  @staticmethod
   def del_space(cls, item : str) -> str:
     """Delete unneccessary spaces in a line"""
     return re.sub(' +', ' ', item.strip())
   
-  @classmethod
-  def clear_html(cls, line : str):
+  @staticmethod
+  def clear_html(cls, line : str) -> str:
     """Delete html tags in a line"""
     revised = re.sub(u'\xa0', ' ', re.sub('\n', ' ', line))
     output = re.sub('&gt;', "'", re.sub('&lt;', "'", revised))
     return re.sub(HTML, '', output)
+ 
+  @classmethod
+  def rx_bracket(cls, rx_str_list : List[str]):
+    input = buil_rx(rx_str_list)
+    return cls.b_start + '[\W_]*' + input + '+[\W_]*' + cls.b_end
   
   @classmethod
-  def unify(cls, line):
+  def unify(cls, line : str) -> str:
     """Unify middle, hyphen, ellipsis, quotation, apostrophe marks"""   
     line = re.sub(cls.blank_ch, ' ', line)
     line = re.sub('[' + cls.katakana_mid + cls.are_a + ']', ',', line)
     line = re.sub(cls.hyphen, '-', line)
     line = re.sub(cls.ellipsis, '⋯', line)
     line = re.sub(cls.quotation, '"', line)
-    return re.sub(cls.apostrophe, "'", line)
+    return re.sub(cls.apostrophe, "'", line)   
