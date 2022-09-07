@@ -4,6 +4,11 @@ from attr import define
 from cached_property import cached_property
 import numpy as np
 
+INDIRECT = ' ?' + '|'.join(['(이?라|하)?(고|며 |면[서은]?',
+                            '이?[라란] ',
+                            '하([는나] |였?([다던]|으나)|기에?는|여도? |[더자]?니 |자(마자)? )',
+                            '할 ',
+                            '한(다| 뒤?)'])
 
 OLD_KOR_UNICODE = [('\u3164', '\u318c'),
                    ('\u318e', '\u318f'), 
@@ -39,7 +44,6 @@ def prevent_rx(input: str) -> str:
   for m in ['\[', '\]', '\.', '\!', '\?', '\^', '\(', '\)', '\-']:
     input = re.sub(m, m, input)
   return input
-
 
 @define
 class B:
@@ -104,11 +108,6 @@ class RxCodes:#TODO
     self.hyphen = self._wrap(['\u2500', '\u3161', '\u23af', '\u2015', '\-', '\u2014'])
     self.ellipsis = self._wrap(['\.\.\.+', '‥+', '…', '⋯'])
     self.line = self._wrap(['"[^"]+"', "'[^\']+'"])
-    self.indirect = self._wrap([' ?(이?라|하)?(고|며 |면[서은]?)',
-                                ' ?이?[라란] ',
-                                ' ?하([는던나] |였?다|기에?는|여도? |[더자]?니 |자(마자)? )',
-                                ' ?할 ',
-                                ' ?한([다 ]| 뒤)'])
     self.bracket, self.b_start, self.b_end = Brackets, self._wrap(Brackets.starts()), self._wrap(Brackets.ends())
     self.sickles = self._wrap(np.concatenate([[v.start, v.end] for v in Brackets.search('sickle')]))
     self.inequals = self._wrap(np.concatenate([[v.start, v.end] for v in Brackets.search('inequal')]))
