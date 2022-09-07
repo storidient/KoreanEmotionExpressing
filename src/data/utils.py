@@ -39,12 +39,17 @@ def del_zeros(input_list : List[str]) -> List[str]:
   """Delete empty strings""" 
   return [_.strip(' ') for _ in input_list if len(_.strip(' ')) > 0]
 
-
 def prevent_rx(input: str) -> str:
   #Prevent regex error
   for m in ['\[', '\]', '\.', '\!', '\?', '\^', '\(', '\)', '\-']:
     input = re.sub(m, m, input)
   return input
+
+def build_rx(input : Union[str, List[str]]):
+  """Compile regular expression string"""
+  if type(input) == list:
+    input = '|'if len(list(filter(lambda x : len(x) > 2, input))) > 0 else '[' + ''.join(input) + ']'
+  return re.compile(input, re.UNICODE)
 
 @define
 class B:
