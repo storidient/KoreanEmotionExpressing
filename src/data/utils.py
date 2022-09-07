@@ -98,18 +98,18 @@ class CleanStr:
   b_end = build_rx(Brackets.ends(), False)
   
   @staticmethod
-  def del_space(cls, item : str) -> str:
+  def del_space(item : str) -> str:
     """Delete unneccessary spaces in a line"""
     return re.sub(' +', ' ', item.strip())
   
   @staticmethod
-  def clear_html(cls, line : str) -> str:
+  def clear_html(line : str) -> str:
     """Delete html tags in a line"""
     revised = re.sub(u'\xa0', ' ', re.sub('\n', ' ', line))
     output = re.sub('&gt;', "'", re.sub('&lt;', "'", revised))
     return re.sub(HTML, '', output)
    
-  @staticmethod
+  @classmethod
   def del_empty(cls, line : str) -> str:
     """Delete empty brackets in a line"""
     return re.sub(cls.b_start + ' *' + cls.b_end, '', line)
