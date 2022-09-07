@@ -99,7 +99,7 @@ class CleanStr:
  
   @classmethod
   def rx_bracket(cls, rx_str_list : List[str]):
-    input = buil_rx(rx_str_list)
+    input = build_rx(rx_str_list)
     return cls.b_start + '[\W_]*' + input + '+[\W_]*' + cls.b_end
   
   @classmethod
