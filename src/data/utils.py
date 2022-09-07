@@ -15,7 +15,7 @@ OLD_KOR_UNICODE = '['+ ''.join(['%s-%s' % (s, e) for s, e in [('\u3164', '\u318c
                                                               ('\uf000', '\uffff'),
                                                               ('\u1113', '\u115f'),
                                                               ('\u1176', '\u11a7'),
-                                                              ('\u11c3', '\u11ff')] + ']'
+                                                              ('\u11c3', '\u11ff')]]) + ']'
                                 
 CHINESE_UNICODE = '[' + ''.join(['%s-%s' % (s, e) for s, e in [('\u31c0', '\u31ef'),
                                                                ('\u31f0', '\u31ff'),
@@ -24,7 +24,7 @@ CHINESE_UNICODE = '[' + ''.join(['%s-%s' % (s, e) for s, e in [('\u31c0', '\u31e
                                                                ('\u3400', '\u4dbf'),
                                                                ('\u4dc0', '\u4dff'),
                                                                ('\u4e00', '\u9fff'),
-                                                               ('\uf900', '\ufaff')] + ']'
+                                                               ('\uf900', '\ufaff')]]) + ']'
 
 INDIRECT = ' ?' + '(' + '|'.join(['(이?라|하)?(고|며 |면[서은]?는? )',
                                   '이?[라란] ',
