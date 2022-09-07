@@ -75,8 +75,20 @@ class Brackets:
   def starts(cls, mark : Optional[str] = None):
     output = [v.start for k,v in cls.__dict__.items() if k.startswith('b')]
     return output if mark == None else [x for x in output if mark not in x]  
+  
+  @classmethod
+  def search(cls, mark_name : str):
+    result = {k : v for k,v in cls.__dict__.items() if mark_name in k}
+    if len(result) == 0:
+      return None
+    
+    elif len(result) > 1:
+      return result.values()
+    
+    else:
+      return list(result.values())[0]
 
-                                 
+    
 class CleanStr:
   blank_ch, katakana_mid, are_a = '\u3000', '\u30fb', '\u318D'
   quotation, apostrophe = '[“”"]', "[‘’']"
