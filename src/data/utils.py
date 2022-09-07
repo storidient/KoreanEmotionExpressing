@@ -108,9 +108,15 @@ class CleanStr:
     revised = re.sub(u'\xa0', ' ', re.sub('\n', ' ', line))
     output = re.sub('&gt;', "'", re.sub('&lt;', "'", revised))
     return re.sub(HTML, '', output)
+   
+  @staticmethod
+  def del_empty(cls, line : str) -> str:
+    """Delete empty brackets in a line"""
+    return re.sub(cls.b_start + ' *' + cls.b_end, '', line)
  
   @classmethod
-  def rx_bracket(cls, rx_str_list : List[str]):
+  def rx_bracket(cls, rx_str_list : List[str]) -> str:
+    """Return the input items surrounded with brackets"""
     input = build_rx(rx_str_list, False)
     if len(input) > 0:
       input += '+'
