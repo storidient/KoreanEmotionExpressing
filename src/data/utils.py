@@ -1,17 +1,11 @@
-import re, unicodedata
+import re
 from typing import List, Tuple, Union, Optional
 from attr import define
-from cached_property import cached_property
 import numpy as np
 
+ROMAN_NUM_UNICODE = '[\u2160-\u217f]'
 
-INDIRECT = ' ?' + '(' + '|'.join(['(이?라|하)?(고|며 |면[서은]?는? )',
-                                  '이?[라란] ',
-                                  '하([는나] |였?([다던]|으나)|기에?는|여도? |[더자]?니 |자(마자)? )',
-                                  '할 ',
-                                  '한(다| 뒤?)']) + ')'
-
-HTML = '</?(a|a href|FL|img|ptrn|DR|sub|sup|equ|sp_|each_|span|br)([ =/][^>]*)*>'
+JAPANESE_UNICODE = '[\u3040-\u309F\u30A0-\u30FF]'
 
 OLD_KOR_UNICODE = '['+ ''.join(['%s-%s' % (s, e) for s, e in [('\u3164', '\u318c'),
                                                               ('\u318e', '\u318f'), 
@@ -22,7 +16,7 @@ OLD_KOR_UNICODE = '['+ ''.join(['%s-%s' % (s, e) for s, e in [('\u3164', '\u318c
                                                               ('\u1113', '\u115f'),
                                                               ('\u1176', '\u11a7'),
                                                               ('\u11c3', '\u11ff')] + ']'
-
+                                
 CHINESE_UNICODE = '[' + ''.join(['%s-%s' % (s, e) for s, e in [('\u31c0', '\u31ef'),
                                                                ('\u31f0', '\u31ff'),
                                                                ('\u3200', '\u32ff'),
@@ -32,9 +26,13 @@ CHINESE_UNICODE = '[' + ''.join(['%s-%s' % (s, e) for s, e in [('\u31c0', '\u31e
                                                                ('\u4e00', '\u9fff'),
                                                                ('\uf900', '\ufaff')] + ']'
 
-ROMAN_NUM_UNICODE = '[\u2160-\u217f]'
-                                 
-JAPANESE_UNICODE = '[\u3040-\u309F\u30A0-\u30FF]'
+INDIRECT = ' ?' + '(' + '|'.join(['(이?라|하)?(고|며 |면[서은]?는? )',
+                                  '이?[라란] ',
+                                  '하([는나] |였?([다던]|으나)|기에?는|여도? |[더자]?니 |자(마자)? )',
+                                  '할 ',
+                                  '한(다| 뒤?)']) + ')'
+
+HTML = '</?(a|a href|FL|img|ptrn|DR|sub|sup|equ|sp_|each_|span|br)([ =/][^>]*)*>'
 
 def del_zeros(input_list : List[str]) -> List[str]:
   """Delete empty strings""" 
@@ -67,16 +65,6 @@ class Brackets:
   b_sickle = B('「', '」')
   b_double_sickle = B('『','』')
   b_double_inequal = B('《', '》')
-
-  @classmethod
-  def search(cls, mark_name : str):
-    result = {k : v for k,v in cls.__dict__.items() if mark_name in k}
-    if len(result) == 0:
-      return None
-    elif len(result) > 1:
-      return result.values()
-    else:
-      return list(result.values())[0]
     
   @classmethod
   def ends(cls, mark : Optional[str] = None):
@@ -90,14 +78,10 @@ class Brackets:
 
                                  
 class CleanStr:
-  blank_ch = re.compile('\u3000', re.UNICODE)
-  katakana_mid, are_a = '\u30fb', '\u318D'
+  blank_ch, katakana_mid, are_a = '\u3000', '\u30fb', '\u318D'
   quotation, apostrophe = '[“”"]', "[‘’']"
-  hyphen_rx = re.compile('[\u2500\u3161\u23af\u2015\u2014\-]+', re.UNICODE)
+  hyphen_rx = '[\u2500\u3161\u23af\u2015\u2014\-]+'
   ellipsis = '\.\.\.+|‥+|…|⋯'
-  b_start = build_rx(Brackets.starts())
-  b_end = build_rx(Brackets.ends())
-  eomi = '[요라다까네야오구]'
   
   @classmethod
   def del_space(cls, item : str) -> str:
@@ -113,9 +97,10 @@ class CleanStr:
   
   @classmethod
   def unify(cls, line):
-    """Unify middle, hyphen, ellipsis, quotation, apostrophe marks"""                    
-    line = re.sub(build_rx([cls.katakana_mid, cls.are_a]), ',', line)
-    line = cls.hyphen_rx.sub('-', line)
+    """Unify middle, hyphen, ellipsis, quotation, apostrophe marks"""   
+    line = re.sub(cls.blank_ch, ' ', line)
+    line = re.sub('[' + cls.katakana_mid + cls.are_a + ']', ',', line)
+    line = re.sub(cls.hyphen, '-', line)
     line = re.sub(cls.ellipsis, '⋯', line)
     line = re.sub(cls.quotation, '"', line)
     return re.sub(cls.apostrophe, "'", line)
