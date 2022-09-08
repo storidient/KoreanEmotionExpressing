@@ -120,7 +120,7 @@ class CleanStr:
     input = build_rx(rx_str_list, False)
     if len(input) > 0:
       input += '+'
-    return cls.b_start + '[\W_]*' + input + '[\W_]*' + cls.b_end
+    return cls.b_start + '[\W_ ]*' + input + '[\W_ ]*' + input + '*' + cls.b_end
   
   @classmethod
   def unify(cls, line : str) -> str:
