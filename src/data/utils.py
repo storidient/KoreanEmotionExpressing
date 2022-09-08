@@ -118,8 +118,6 @@ class CleanStr:
   def rx_bracket(cls, rx_str_list : List[str]) -> str:
     """Return the input items surrounded with brackets"""
     input = build_rx(rx_str_list, False)
-    if len(input) > 0:
-      input += '+'
     return cls.b_start + '[\W_ ]*' + input + '+[\W_ ]*' + input + '*' + cls.b_end
   
   @classmethod
