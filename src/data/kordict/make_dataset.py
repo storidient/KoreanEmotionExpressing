@@ -149,9 +149,9 @@ class CleanRepr:
     if re.match('.*\(.*\)', rep):
       rep, options = self.josa_option(rep,options)
     
-    rep = self.del_space(rep)   
+    rep = re.sub(' +', ' ', rep.strip(' '))
     if self.save_options == True:
-      options = list(map(self.del_space, options))
+      options = list(map(lambda x : re.sub(' +', ' ', x.strip(' ')), options))
       options.append(rep)
       
     return rep, options
