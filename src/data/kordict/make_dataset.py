@@ -1,5 +1,6 @@
-import json
-from typing import Dict, List
+import json, re
+from typing import Dict, List, Optional
+from src.data.kordict.utils import Options
 
 
 def get_conju(item : List[Dict[str, str]]) -> List[str]:
@@ -43,6 +44,7 @@ class OpenKorean:
             'type' : item['senseinfo']['type'],
             'pos' : pos,
             'source' : 'OKD'}
+
   
 class StandardKorean:
   """Get word information from a json file downloaded from Standard Korean Dictionary
@@ -133,7 +135,7 @@ class CleanRepr:
   
     return rep, options
   
-  def run(self, word) -> str:
+  def run(self, word : str) -> str:
     """revise word represetation form with all the rules"""
     rep = re.sub('[0-9\-]', word)
     options = list() if self.save_options == True else None
