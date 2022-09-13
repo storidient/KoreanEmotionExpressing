@@ -137,7 +137,7 @@ class CleanRepr:
   
   def run(self, word : str) -> str:
     """revise word represetation form with all the rules"""
-    rep = re.sub('[0-9\-]', word)
+    rep = re.sub('[0-9\-]', '', word)
     options = list() if self.save_options == True else None
 
     if re.match('.*\^', rep): #delete ^
