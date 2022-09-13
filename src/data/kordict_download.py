@@ -1,16 +1,10 @@
 import json
 from typing import Dict, List
-from jamo import h2j, j2hcj
 
-
-def extract_conjugation(item : List[Dict[str, str]]) -> List[str]:
+def get_conju(item : List[Dict[str, str]]) -> List[str]:
   """Return conjugation forms of a word"""
-  conjugation = [x['abbreviation_info']['abbreviation'] if 'abbreviation_info' in x.keys() else x['conjugation_info']['conjugation'] for x in item ]
-  avoid_zero = list(filter(lambda x: len(x) > 0, 
-                            list(map(lambda x: x.strip(' '), conjugation))
-                            ))
-  return list(filter(lambda x: j2hcj(h2j(x[-1]))[-1] not in ['ㄴ', 'ㅣ','ㅗ'], avoid_zero))
-
+  return item
+#conjugation = [x['abbreviation_info']['abbreviation'] if 'abbreviation_info' in x.keys() else x['conjugation_info']['conjugation'] for x in item ]
 
 class OpenKorean:
   """Get word information from a json file downloaded from Open Korean Dictionary
@@ -36,12 +30,7 @@ class OpenKorean:
   def get_info(self, item) -> Dict[str, str]:
     pos = item['senseinfo']['pos'] if 'pos' in item['senseinfo'].keys() else '품사 없음'
     pattern = [x['pattern'] for x in item['senseinfo']['pattern_info']] if 'pattern_info' in item['senseinfo'].keys() else list()
-
-    if ('형용사' in pos or '동사' in pos) and ('conju_info' in item['wordinfo'].keys()):
-      conjugation = extract_conjugation(item['wordinfo']['conju_info'])
-
-    else:
-      conjugation = list()
+    conjugation = get_conju(item['wordinfo']['conju_info']) if ('형용사' in pos or '동사' in pos) and ('conju_info' in item['wordinfo'].keys()) else list()
     
     return {'word' : item['wordinfo']['word'],
             'word_unit' : item['wordinfo']['word_unit'],
@@ -83,11 +72,7 @@ class StandardKorean:
     item_pattern = item_pos[0]['comm_pattern_info']
     pos = item_pos[0]['pos']
     pattern = item_pattern[0]['pattern_info']['pattern'] if 'pattern_info' in item_pattern[0].keys() else ''
-
-    if ('형용사' in pos or '동사' in pos) and ('conju_info' in item.keys()):
-      conjugation = extract_conjugation(item['conju_info'])
-    else:
-      conjugation = list()
+    conjugation = get_conju(item['conju_info']) if ('형용사' in pos or '동사' in pos) and ('conju_info' in item.keys()) else list()
 
     return [{'word' : item['word'],
              'word_unit' : item['word_unit'],
