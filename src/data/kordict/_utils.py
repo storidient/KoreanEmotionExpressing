@@ -1,10 +1,13 @@
 import json
 from typing import Dict, List
 
+
 def get_conju(item : List[Dict[str, str]]) -> List[str]:
   """Return conjugation forms of a word"""
-  return item
-#conjugation = [x['abbreviation_info']['abbreviation'] if 'abbreviation_info' in x.keys() else x['conjugation_info']['conjugation'] for x in item ]
+  return [{'long' : x['conjugation_info']['conjugation'],
+           'short' : x['abbreviation_info']['abbreviation'] if 'abbreviation_info' in x.keys() else None
+           } for x in item]
+
 
 class OpenKorean:
   """Get word information from a json file downloaded from Open Korean Dictionary
@@ -34,16 +37,12 @@ class OpenKorean:
     
     return {'word' : item['wordinfo']['word'],
             'word_unit' : item['wordinfo']['word_unit'],
-            'pattern' : '/'.join(pattern),
-            'conjugation' : '/'.join(conjugation),
+            'pattern' : pattern,
+            'conjugation' : conjugation,
             'definition' : item['senseinfo']['definition'],
             'type' : item['senseinfo']['type'],
             'pos' : pos,
             'source' : 'OKD'}
-  
-  def __repre__(self):
-    return 'Download %d items from Open Korean Dictionary' % (len(self.output))
-
   
 class StandardKorean:
   """Get word information from a json file downloaded from Standard Korean Dictionary
@@ -77,11 +76,8 @@ class StandardKorean:
     return [{'word' : item['word'],
              'word_unit' : item['word_unit'],
              'pattern' : pattern,
-             'conjugation' : '/'.join(conjugation),
+             'conjugation' : conjugation,
              'pos' : pos,
              'definition': sense_info['definition'],
              'type' : '일반어',
              'source' : 'SKD'} for sense_info in item_pattern[0]['sense_info']]
-  
-  def __repre__(self):
-    return 'Download %d items from Standard Korean Dictionary' % (len(self.output))
