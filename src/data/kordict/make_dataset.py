@@ -1,12 +1,11 @@
 import json, re
 from typing import Dict, List, Optional
 from src.data.kordict.utils import Options
-from src.data.utils import OLD_KOR_UNICODE, ROMAN_NUM_UNICODE
+from src.data.utils import OLD_KOR_UNICODE, ROMAN_NUM_UNICODE, CHINESE_UNICODE
 
 OLD_KOR = re.compile('.*'+'['+ ''.join(['%s-%s' % (s,e) for s,e in OLD_KOR_UNICODE]) + ']', re.UNICODE)
-
 NUMBERS =  '[' + '0-9' + ''.join(['%s-%s' % (s,e) for s,e in ROMAN_NUM_UNICODE]) + ']'
-
+CHINESE =  '[' + ''.join(['%s-%s' % (s,e) for s,e in CHINESE_UNICODE]) + ']'
 
 def get_conju(item : List[Dict[str, str]]) -> List[str]:
   """Return conjugation forms of a word"""
