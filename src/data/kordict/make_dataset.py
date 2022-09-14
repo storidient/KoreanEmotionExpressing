@@ -1,11 +1,14 @@
 import json, re
 from typing import Dict, List, Optional
-from src.data.utils import CleanStr
-from src.data.utils import OLD_KOR_UNICODE, ROMAN_NUM_UNICODE, CHINESE_UNICODE
+from jamo import h2j, j2hcj
 from cached_property import cached_property
 from boltons.iterutils import pairwise
 from itertools import product
 import numpy as np
+
+from src.data.utils import CleanStr
+from src.data.utils import OLD_KOR_UNICODE, ROMAN_NUM_UNICODE, CHINESE_UNICODE
+
 
 EOMI = 'ㅕㅓㅏㅑㅘㅝㅐㅒㅖㅔ'
 OLD_KOR = re.compile('.*'+'['+ ''.join(['%s-%s' % (s,e) for s,e in OLD_KOR_UNICODE]) + ']', re.UNICODE)
