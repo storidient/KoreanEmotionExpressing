@@ -5,7 +5,8 @@ import numpy as np
 
 ROMAN_NUM_UNICODE = [('\u2160', '\u217f')]
 
-JAPANESE_UNICODE = '[\u3040-\u309F\u30A0-\u30FF]'
+JAPANESE_UNICODE = [('\u3040', '\u309F'),
+                    ('\u30A0', '\u30FF')]
 
 OLD_KOR_UNICODE = [('\u3164', '\u318c'),
                    ('\u318e', '\u318f'), 
