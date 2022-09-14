@@ -32,7 +32,7 @@ INDIRECT = ' ?' + '(' + '|'.join(['(이?라|하)?(고서?는?,? |며,? |면[서�
                                   '할 ',
                                   '한(다| 뒤?)']) + ')'
 
-HTML = '</?(a|a href|FL|img|ptrn|DR|sub|sup|equ|sp_|each_|span|br)([ =/][^>]*)*>'
+HTML = '</?(a|a href|FL|img|ptrn|DR|sub|sup|equ|sp|each|span|br)([ =/_][^>]*)*>'
 
 def del_zeros(input_list : List[str]) -> List[str]:
   """Delete empty strings""" 
