@@ -1,6 +1,6 @@
 import json, re
 from typing import Dict, List, Optional
-from src.data.kordict.utils import Options, CleanStr
+from src.data.utils import CleanStr
 from src.data.utils import OLD_KOR_UNICODE, ROMAN_NUM_UNICODE, CHINESE_UNICODE
 from cached_property import cached_property
 from boltons.iterutils import pairwise
