@@ -7,7 +7,7 @@ from boltons.iterutils import pairwise
 from itertools import product
 import numpy as np
 
-
+EOMI = 'ㅕㅓㅏㅑㅘㅝㅐㅒㅖㅔ'
 OLD_KOR = re.compile('.*'+'['+ ''.join(['%s-%s' % (s,e) for s,e in OLD_KOR_UNICODE]) + ']', re.UNICODE)
 NUMBERS =  '[' + '0-9' + ''.join(['%s-%s' % (s,e) for s,e in ROMAN_NUM_UNICODE]) + ']'
 CHINESE_ENGLISH =  '[A-Za-z' + ''.join(['%s-%s' % (s,e) for s,e in CHINESE_UNICODE]) + ']'
@@ -19,6 +19,15 @@ def get_conju(item : List[Dict[str, str]]) -> List[str]:
            'short' : x['abbreviation_info']['abbreviation'] if 'abbreviation_info' in x.keys() else None
            } for x in item]
 
+def clean_conju(conjugation_list : List[str]):
+  output = list(filter(lambda x :j2hcj(h2j(x['long']))[-1] in EOMI, conjugation_list))
+  if len(output) == 0:
+    return ''
+  
+  else:
+    output = list(filter(lambda x: x != None, sum([list(x.values()) for x in output],[])))
+    output = sorted(output, key = lambda x : len(x)) 
+    return output[0] if len(output) > 0 else ''
 
 class OpenKorean:
   """Get word information from a json file downloaded from Open Korean Dictionary
