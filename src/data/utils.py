@@ -7,15 +7,15 @@ ROMAN_NUM_UNICODE = '[\u2160-\u217f]'
 
 JAPANESE_UNICODE = '[\u3040-\u309F\u30A0-\u30FF]'
 
-OLD_KOR_UNICODE = '['+ ''.join(['%s-%s' % (s, e) for s, e in [('\u3164', '\u318c'),
-                                                              ('\u318e', '\u318f'), 
-                                                              ('\ua960', '\ua97f'),
-                                                              ('\ud7b0', '\ud7ff'),
-                                                              ('\ue000', '\uefff'),
-                                                              ('\uf000', '\uffff'),
-                                                              ('\u1113', '\u115f'),
-                                                              ('\u1176', '\u11a7'),
-                                                              ('\u11c3', '\u11ff')]]) + ']'
+OLD_KOR_UNICODE = [('\u3164', '\u318c'),
+                   ('\u318e', '\u318f'), 
+                   ('\ua960', '\ua97f'),
+                   ('\ud7b0', '\ud7ff'),
+                   ('\ue000', '\uefff'),
+                   ('\uf000', '\uffff'),
+                   ('\u1113', '\u115f'),
+                   ('\u1176', '\u11a7'),
+                   ('\u11c3', '\u11ff')]
                                 
 CHINESE_UNICODE = '[' + ''.join(['%s-%s' % (s, e) for s, e in [('\u31c0', '\u31ef'),
                                                                ('\u31f0', '\u31ff'),
@@ -98,7 +98,7 @@ class CleanStr:
   b_end = build_rx(Brackets.ends(), False)
   
   @staticmethod
-  def del_space(item : str) -> str:
+  def clear_space(item : str) -> str:
     """Delete unneccessary spaces in a line"""
     return re.sub(' +', ' ', item.strip())
   
@@ -110,7 +110,7 @@ class CleanStr:
     return re.sub(HTML, '', output)
    
   @classmethod
-  def del_empty(cls, line : str) -> str:
+  def clear_empty_bracket(cls, line : str) -> str:
     """Delete empty brackets in a line"""
     return re.sub(cls.b_start + ' *' + cls.b_end, '', line)
  
@@ -128,4 +128,4 @@ class CleanStr:
     line = re.sub(cls.hyphen, '-', line)
     line = re.sub(cls.ellipsis, '⋯', line)
     line = re.sub(cls.quotation, '"', line)
-    return re.sub(cls.apostrophe, "'", line)   
+    return re.sub(cls.apostrophe, "'", line)
