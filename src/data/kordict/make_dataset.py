@@ -10,6 +10,7 @@ OLD_KOR = re.compile('.*'+'['+ ''.join(['%s-%s' % (s,e) for s,e in OLD_KOR_UNICO
 NUMBERS =  '[' + '0-9' + ''.join(['%s-%s' % (s,e) for s,e in ROMAN_NUM_UNICODE]) + ']'
 CHINESE_ENGLISH =  '[A-Za-z' + ''.join(['%s-%s' % (s,e) for s,e in CHINESE_UNICODE]) + ']'
 
+
 def get_conju(item : List[Dict[str, str]]) -> List[str]:
   """Return conjugation forms of a word"""
   return [{'long' : x['conjugation_info']['conjugation'],
