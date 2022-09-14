@@ -3,7 +3,7 @@ from typing import List, Tuple, Union, Optional
 from attr import define
 import numpy as np
 
-ROMAN_NUM_UNICODE = '[\u2160-\u217f]'
+ROMAN_NUM_UNICODE = [('\u2160', '\u217f')]
 
 JAPANESE_UNICODE = '[\u3040-\u309F\u30A0-\u30FF]'
 
