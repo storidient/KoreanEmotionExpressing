@@ -80,7 +80,7 @@ class StandardKorean:
     item_pos = item['pos_info']
     item_pattern = item_pos[0]['comm_pattern_info']
     pos = item_pos[0]['pos']
-    pattern = item_pattern[0]['pattern_info']['pattern'] if 'pattern_info' in item_pattern[0].keys() else ''
+    pattern = [item_pattern[0]['pattern_info']['pattern']] if 'pattern_info' in item_pattern[0].keys() else list()
     conjugation = get_conju(item['conju_info']) if ('형용사' in pos or '동사' in pos) and ('conju_info' in item.keys()) else list()
 
     return [{'word' : item['word'],
