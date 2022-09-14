@@ -22,6 +22,7 @@ def get_conju(item : List[Dict[str, str]]) -> List[str]:
            'short' : x['abbreviation_info']['abbreviation'] if 'abbreviation_info' in x.keys() else None
            } for x in item]
 
+
 def clean_conju(conjugation_list : List[str]):
   output = list(filter(lambda x :j2hcj(h2j(x['long']))[-1] in EOMI, conjugation_list))
   if len(output) == 0:
@@ -32,6 +33,7 @@ def clean_conju(conjugation_list : List[str]):
     output = sorted(output, key = lambda x : len(x)) 
     return output[0] if len(output) > 0 else ''
 
+  
 class OpenKorean:
   """Get word information from a json file downloaded from Open Korean Dictionary
   (https://opendict.korean.go.kr/main)
