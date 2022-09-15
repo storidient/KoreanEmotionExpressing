@@ -142,6 +142,7 @@ class CleanDef:
   def __init__(self, input : str, word :str):
     self.input = input
     self.word = word
+    self.output = self._build()
   
   def _split(self, line : str) -> List[str]:
     idx = [[x.start(0), x.end(0)] for x in self.find_synonym.finditer(line)]
