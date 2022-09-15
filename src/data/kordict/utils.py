@@ -138,9 +138,8 @@ class CleanDef:
   letter_bracket = re.compile(CleanStr.rx_bracket(CHINESE_ENGLISH))
   _clean_repr = CleanRepr(False).run
 
-  def __init__(self, input :str, word :str):
-    self.input, self.word = input, word
-    self.output = self._build()
+  def __init__(self, word :str):
+    self.word = word
   
   def _split(self, line : str) -> List[str]:
     idx = [[x.start(0), x.end(0)] for x in self.find_synonym.finditer(line)]
@@ -149,7 +148,7 @@ class CleanDef:
     token_idx = [idx for idx, token in enumerate(tokens) if self.find_synonym.match(token)]
     return tokens, token_idx
   
-  def _clean_synonym(self, token : str) -> str:
+  def _clean_synonym(self, token : str, word: str) -> str:
     """Revise words inside apostrophes‘’"""
     output = self.number_bracket.sub('', token)
     output = re.sub(NUMBERS, '', output) if not re.match('‘[0-9]+’', output) else output
