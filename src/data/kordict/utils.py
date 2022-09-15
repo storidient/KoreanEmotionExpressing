@@ -1,4 +1,6 @@
+import re
 from src.data.utils import CleanStr
+from jamo import h2j, j2hcj
 from src.data.utils import OLD_KOR_UNICODE, ROMAN_NUM_UNICODE, CHINESE_UNICODE
 
 EOMI = 'ㅕㅓㅏㅑㅘㅝㅐㅒㅖㅔ'
