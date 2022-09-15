@@ -1,8 +1,7 @@
 import re
 from typing import List, Dict, Optional, Union
-from src.data.utils import CleanStr
+from src.data.utils import ROMAN_NUM_UNICODE, CHINESE_UNICODE, CleanStr
 from jamo import h2j, j2hcj
-from src.data.utils import ROMAN_NUM_UNICODE, CHINESE_UNICODE
 from cached_property import cached_property
 from boltons.iterutils import pairwise
 from itertools import product
