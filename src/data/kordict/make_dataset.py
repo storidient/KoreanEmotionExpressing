@@ -1,6 +1,6 @@
 import json, re
 from typing import Dict, List, Tuple, Union
-from src.data.kordict.utils import CleanRepr, CleanDef, clean_conju
+from src.data.kordict.utils import CleanRepr, clean_conju
 import numpy as np
 from attrs import define, field
 
