@@ -68,8 +68,10 @@ class CleanRepr:
     save_options: whether to return a list of all the possible forms or not
                   (e.g. '밥(을) 먹다' -> ['밥 먹다', '밥을 먹다'])
    """
-  def __init__(self, save_options : bool = True):
+  def __init__(self, input : str, save_options : bool = True):
+    self.input = input
     self.save_options = save_options
+    self.output = self._build()
 
   def space_option(self, 
                    word : str, 
@@ -111,9 +113,9 @@ class CleanRepr:
   
     return rep, options
   
-  def run(self, input) -> str:
+  def _build(self) -> str:
     """revise word represetation form with all the rules"""
-    rep = re.sub('[0-9\-]', '', input)
+    rep = re.sub('[0-9\-]', '', self.input)
     options = list() if self.save_options == True else None
 
     if re.match('.*\^', rep): #delete ^
