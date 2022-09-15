@@ -151,7 +151,7 @@ class CleanDef:
     token_idx = [idx for idx, token in enumerate(tokens) if self.find_synonym.match(token)]
     return tokens, token_idx
   
-  def _clean_synonym(self, token : str, word: str) -> str:
+  def _clean_synonym(self, token : str) -> str:
     """Revise words inside apostrophes‘’"""
     output = self.number_bracket.sub('', token)
     output = re.sub(NUMBERS, '', output) if not re.match('‘[0-9]+’', output) else output
