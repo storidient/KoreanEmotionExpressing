@@ -15,9 +15,9 @@ CHINESE_ENGLISH =  '[A-Za-z' + ''.join(['%s-%s' % (s,e) for s,e in CHINESE_UNICO
 
 def clean_conju(item : List[Dict[str, str]]) -> str:
   c, a, i= 'conjugation', 'abbreviation', '_info'
-  output = [[x[c + i][c], x[a + i][a] if a + i in x.keys() else None] for x in item]
-  output = list(filter(lambda x : j2hcj(h2j(x[0]))[-1] in EOMI, output))
-  output = sorted(list(filter(None, sum(output, []))), key = lambda x : len(x)) 
+  items = [[x[c + i][c], x[a + i][a] if a + i in x.keys() else None] for x in item]
+  filtered = list(filter(lambda x : j2hcj(h2j(x[0]))[-1] in EOMI, items))
+  output = sorted(list(filter(None, sum(filtered, []))), key = lambda x : len(x)) 
   return output[0] if len(output) > 0 else ''
   
   
@@ -139,7 +139,6 @@ class CleanDef:
   find_synonym = re.compile('‘[^’]*’')
   number_bracket = re.compile(CleanStr.rx_bracket(NUMBERS))
   letter_bracket = re.compile(CleanStr.rx_bracket(CHINESE_ENGLISH))
-  _clean_repr = CleanRepr(False).run
 
   def __init__(self, input : str, word :str):
     self.input = input
@@ -158,7 +157,7 @@ class CleanDef:
     output = self.number_bracket.sub('', token)
     output = re.sub(NUMBERS, '', output) if not re.match('‘[0-9]+’', output) else output
     output = '‘%s’' % (self.word) if output == '‘’' and token != '‘’' else output
-    output, _ = self._clean_repr(output)
+    output, _ = CleanRepr(output, False).output
     return re.sub('[\-\.\_\,]', '', output)
   
   def _clean_def(self, token : str) -> str:
