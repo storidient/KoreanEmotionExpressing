@@ -1,8 +1,5 @@
 import json, re
 from typing import Dict, List, Optional
-from cached_property import cached_property
-from boltons.iterutils import pairwise
-from itertools import product
 import numpy as np
 from src.data.kordict.utils import CleanRepr, CleanDef, clean_conju
 
