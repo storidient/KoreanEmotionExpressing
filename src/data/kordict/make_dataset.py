@@ -14,6 +14,7 @@ def get_conju(item : List[Dict[str, str]]) -> List[str]:
            'short' : x['abbreviation_info']['abbreviation'] if 'abbreviation_info' in x.keys() else None
            } for x in item]
 
+
 class OpenKorean:
   """Get word information from a json file downloaded from Open Korean Dictionary
   (https://opendict.korean.go.kr/main)
