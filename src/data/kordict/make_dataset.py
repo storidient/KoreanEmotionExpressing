@@ -28,10 +28,10 @@ class OpenKorean:
       self.data = json.load(f)
     self.output = self._build()
 
-  def _build(self) -> List[Dict[str, str]]:
+  def _build(self) -> List[Dict[str, Union[List[str], str]]]]:
     return list(map(self.get_info, self.data['channel']['item']))
     
-  def get_info(self, item) -> Dict[str, str]:
+  def get_info(self, item) -> Dict[str, Union[List[str], str]]:
     pos = item['senseinfo']['pos'] if 'pos' in item['senseinfo'].keys() else '품사 없음'
     pattern = [x['pattern'] for x in item['senseinfo']['pattern_info']] if 'pattern_info' in item['senseinfo'].keys() else list()
     conjugation = get_conju(item['wordinfo']['conju_info']) if ('형용사' in pos or '동사' in pos) and ('conju_info' in item['wordinfo'].keys()) else list()
@@ -64,10 +64,10 @@ class StandardKorean:
       self.data = json.load(f)
     self.output = self._build()
     
-  def _build(self) -> List[Dict[str, str]]:
+  def _build(self) -> List[Dict[str, Union[List[str], str]]]]
     return sum(list(map(self.get_info, self.data['channel']['item'])),[])
     
-  def get_info(self, item) -> List[Dict[str, str]]:
+  def get_info(self, item) -> Dict[str, Union[List[str], str]]]:
     item = item['word_info']
     item_pos = item['pos_info']
     item_pattern = item_pos[0]['comm_pattern_info']
