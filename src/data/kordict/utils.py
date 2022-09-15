@@ -15,7 +15,8 @@ CHINESE_ENGLISH =  '[A-Za-z' + ''.join(['%s-%s' % (s,e) for s,e in CHINESE_UNICO
 
 def clean_conju(item : List[Dict[str, str]]) -> str:
   c, a, i= 'conjugation', 'abbreviation', '_info'
-  output = [[x[c + i][c], x[a + i][a] if a + i in x.keys() else None] for x in item if j2hcj(h2j(x[c + i][c][-1])) in EOMI]
+  output = [[x[c + i][c], x[a + i][a] if a + i in x.keys() else None] for x in item]
+  output = list(filter(lambda x : j2hcj(h2j(x[0]))[-1] in EOMI, output))
   output = sorted(list(filter(None, sum(output, []))), key = lambda x : len(x)) 
   return output[0] if len(output) > 0 else ''
   
