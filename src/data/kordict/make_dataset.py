@@ -1,6 +1,5 @@
 import json, re
 from typing import Dict, List, Optional
-from jamo import h2j, j2hcj
 from cached_property import cached_property
 from boltons.iterutils import pairwise
 from itertools import product
