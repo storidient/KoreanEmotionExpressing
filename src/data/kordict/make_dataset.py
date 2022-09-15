@@ -156,8 +156,12 @@ class CleanRepr:
     save_options: whether to return a list of all the possible forms or not
                   (e.g. '밥(을) 먹다' -> ['밥 먹다', '밥을 먹다'])
    """
-  def __init__(self, save_options : bool = True):
+  def __init__(self, 
+               input : str,
+               save_options : bool = True):
+    self.input = input
     self.save_options = save_options
+    self.output = self._build()
 
   def space_option(self, 
                    word : str, 
@@ -199,9 +203,9 @@ class CleanRepr:
   
     return rep, options
   
-  def run(self, word : str) -> str:
+  def _build(self) -> str:
     """revise word represetation form with all the rules"""
-    rep = re.sub('[0-9\-]', '', word)
+    rep = re.sub('[0-9\-]', '', self.input)
     options = list() if self.save_options == True else None
 
     if re.match('.*\^', rep): #delete ^
@@ -225,7 +229,7 @@ class CleanDef:
   find_synonym = re.compile('‘[^’]*’')
   number_bracket = re.compile(CleanStr.rx_bracket(NUMBERS))
   letter_bracket = re.compile(CleanStr.rx_bracket(CHINESE_ENGLISH))
-  clean_repr = CleanRepr(False).run
+  clean_repr = CleanRepr(False)
 
   def __init__(self, input :str, word :str):
     self.input, self.word = input, word
@@ -243,7 +247,7 @@ class CleanDef:
     output = self.number_bracket.sub('', token)
     output = re.sub(NUMBERS, '', output) if not re.match('‘[0-9]+’', output) else output
     output = '‘%s’' % (self.word) if output == '‘’' and token != '‘’' else output
-    output, _ = self.clean_repr(output)
+    output, _ = CleanRepr(output, False).output
     return re.sub('[\-\.\_\,]', '', output)
   
   def _clean_def(self, token : str) -> str:
