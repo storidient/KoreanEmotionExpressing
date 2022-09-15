@@ -1,7 +1,6 @@
 import json, re
-from typing import Dict, List, Optional
+from typing import Dict, List
 import numpy as np
-from src.data.kordict.utils import CleanRepr, CleanDef, clean_conju
 
 
 def get_conju(item : List[Dict[str, str]]) -> List[str]:
