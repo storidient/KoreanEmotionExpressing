@@ -5,6 +5,7 @@ from jamo import h2j, j2hcj
 from cached_property import cached_property
 from boltons.iterutils import pairwise
 from itertools import product
+from jamo import j2hcj, h2j
 
 
 EOMI = 'ㅕㅓㅏㅑㅘㅝㅐㅒㅖㅔ'
@@ -12,16 +13,11 @@ NUMBERS =  '[' + '0-9' + ''.join(['%s-%s' % (s,e) for s,e in ROMAN_NUM_UNICODE])
 CHINESE_ENGLISH =  '[A-Za-z' + ''.join(['%s-%s' % (s,e) for s,e in CHINESE_UNICODE]) + ']'
 
 
-def clean_conju(conjugation_list : List[str]):
-  """Return Eo-conjugation('-어') form of a word"""
-  output = list(filter(lambda x :j2hcj(h2j(x['long']))[-1] in EOMI, conjugation_list))
-  if len(output) == 0:
-    return ''
-  
-  else:
-    output = list(filter(lambda x: x != None, sum([list(x.values()) for x in output],[])))
-    output = sorted(output, key = lambda x : len(x)) 
-    return output[0] if len(output) > 0 else ''
+def clean_conju(item : List[Dict[str, str]]) -> str:
+  c, a, i= 'conjugation', 'abbreviation', '_info'
+  output = [[x[c + i][c], x[a + i][a] if a + i in x.keys() else None] for x in item if j2hcj(h2j(x[c + i][c][-1])) in EOMI]
+  output = sorted(list(filter(None, sum(output, []))), key = lambda x : len(x)) 
+  return output[0] if len(output) > 0 else ''
   
   
 class Options:
@@ -71,12 +67,8 @@ class CleanRepr:
     save_options: whether to return a list of all the possible forms or not
                   (e.g. '밥(을) 먹다' -> ['밥 먹다', '밥을 먹다'])
    """
-  def __init__(self, 
-               input : str,
-               save_options : bool = True):
-    self.input = input
+  def __init__(self, save_options : bool = True):
     self.save_options = save_options
-    self.output = self._build()
 
   def space_option(self, 
                    word : str, 
@@ -118,9 +110,9 @@ class CleanRepr:
   
     return rep, options
   
-  def _build(self) -> str:
+  def run(self, input) -> str:
     """revise word represetation form with all the rules"""
-    rep = re.sub('[0-9\-]', '', self.input)
+    rep = re.sub('[0-9\-]', '', input)
     options = list() if self.save_options == True else None
 
     if re.match('.*\^', rep): #delete ^
@@ -144,6 +136,7 @@ class CleanDef:
   find_synonym = re.compile('‘[^’]*’')
   number_bracket = re.compile(CleanStr.rx_bracket(NUMBERS))
   letter_bracket = re.compile(CleanStr.rx_bracket(CHINESE_ENGLISH))
+  _clean_repr = CleanRepr(False).run
 
   def __init__(self, input :str, word :str):
     self.input, self.word = input, word
@@ -161,15 +154,15 @@ class CleanDef:
     output = self.number_bracket.sub('', token)
     output = re.sub(NUMBERS, '', output) if not re.match('‘[0-9]+’', output) else output
     output = '‘%s’' % (self.word) if output == '‘’' and token != '‘’' else output
-    output, _ = CleanRepr(output, False).output
+    output, _ = self._clean_repr(output)
     return re.sub('[\-\.\_\,]', '', output)
   
   def _clean_def(self, token : str) -> str:
     output = self.letter_bracket.sub('', token)
     return re.sub('또는 그런 것\.?$', '',output)
 
-  def _build(self):
-    input = CleanStr.clear_html(self.input)
+  def _build(self, input):
+    input = CleanStr.clear_html(input)
     revised = re.sub('‘.*', '', input) if re.fullmatch('.*‘[^’]*', input) else input
     
     if revised.startswith('→')and len(self.find_synonym.findall(revised)) == 0:#synonym == definition
