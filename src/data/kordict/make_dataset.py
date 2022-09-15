@@ -28,7 +28,7 @@ class OpenKorean:
       self.data = json.load(f)
     self.output = self._build()
 
-  def _build(self) -> List[Dict[str, Union[List[str], str]]]]:
+  def _build(self) -> List[Dict[str, Union[List[str], str]]]:
     return list(map(self.get_info, self.data['channel']['item']))
     
   def get_info(self, item) -> Dict[str, Union[List[str], str]]:
@@ -64,10 +64,10 @@ class StandardKorean:
       self.data = json.load(f)
     self.output = self._build()
     
-  def _build(self) -> List[Dict[str, Union[List[str], str]]]]
+  def _build(self) -> List[Dict[str, Union[List[str], str]]]:
     return sum(list(map(self.get_info, self.data['channel']['item'])),[])
     
-  def get_info(self, item) -> Dict[str, Union[List[str], str]]]:
+  def get_info(self, item) -> Dict[str, Union[List[str], str]]:
     item = item['word_info']
     item_pos = item['pos_info']
     item_pattern = item_pos[0]['comm_pattern_info']
