@@ -10,15 +10,15 @@ class Wordinfo:
   repr : str
   definition : str
   pos : str
-  word : str = field(
-      converter = lambda x : re.sub('[0-9\^\_]','',x),
-      eq = False)
   conjugation : list = field(converter = clean_conju)
-
-  options : list = field(converter = lambda x : '&'.join(sorted(x)))
-  syntax : list = field(converter = lambda x : '&'.join(sorted(x)))
-  synonym : list = field(converter = lambda x : '&'.join(sorted(x)))
-  
+  word : str = field(converter = lambda x : re.sub('[0-9\^\_]','',x),
+                     eq = False)
+  options : list = field(converter = lambda x : '&'.join(sorted(x))),
+                         eq = False)
+  syntax : list = field(converter = lambda x : '&'.join(sorted(x)), 
+                        eq = False)
+  synonym : list = field(converter = lambda x : '&'.join(sorted(x)),
+                         eq = False)
   unit : str = field(eq = False)
   word_type : str = field(eq = False)
 
