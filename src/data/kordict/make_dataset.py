@@ -13,7 +13,7 @@ class Wordinfo:
   conjugation : list = field(converter = clean_conju)
   word : str = field(converter = lambda x : re.sub('[0-9\^\_]','',x),
                      eq = False)
-  options : list = field(converter = lambda x : '&'.join(sorted(x))),
+  options : list = field(converter = lambda x : '&'.join(sorted(x)),
                          eq = False)
   syntax : list = field(converter = lambda x : '&'.join(sorted(x)), 
                         eq = False)
