@@ -31,7 +31,6 @@ class Wordinfo:
         'options' : options,
         'definition' : definition,
         'synonym' : synonym
-
     })
     return cls(**info)
 
