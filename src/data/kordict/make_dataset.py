@@ -5,26 +5,52 @@ import numpy as np
 from attrs import define, field
 
 
-@define
+@define(frozen = True)
 class Wordinfo:
-  word: str
-  word_unit : str
-  syntax : list
-  conjugation : list
+  repr : str
+  definition : str
   pos : str
-  definition : list
-  word_type : str
-  source : str
+  word : str = field(
+      converter = lambda x : re.sub('[0-9\^\_]','',x),
+      eq = False)
+  conjugation : list = field(converter = clean_conju)
+
+  options : list = field(converter = lambda x : '&'.join(sorted(x)))
+  syntax : list = field(converter = lambda x : '&'.join(sorted(x)))
+  synonym : list = field(converter = lambda x : '&'.join(sorted(x)))
+  
+  unit : str = field(eq = False)
+  word_type : str = field(eq = False)
+
+  @classmethod
+  def update(cls, info : Dict):
+    repr, options = CleanRepr(info['word']).output
+    definition, synonym = CleanDef(info['definition'],info['word']).output
+    info.update({
+        'repr' : repr,
+        'options' : options,
+        'definition' : definition,
+        'synonym' : synonym
+
+    })
+    return cls(**info)
 
     
 class KoreanCorpus:
   def __init__(self, 
                path : str, 
                standard : bool = True):
+    self.standard = standard
     with open(path, 'r') as f:
       data = json.load(f)
-    input = data['channel']['item']
-    self.output = list(map(self._standard_info, input)) if standard == True else list(map(self._our_info, input))
+    self.output = self._build(data)
+  
+  def _build(self, data):
+    if self.standard == True:
+      return sum(list(map(self._standard_info, tqdm(data['channel']['item']))),[])
+    
+    else:
+      return list(map(self._our_info, tqdm(data['channel']['item'])))
   
   def get_conju(self, item : List[Dict[str, str]]) -> List[Tuple[str, str]]:
     """Return conjugation forms of a word"""
@@ -39,29 +65,27 @@ class KoreanCorpus:
     item_pattern = item_pos[0]['comm_pattern_info']
     pos = item_pos[0]['pos']
     pattern = [item_pattern[0]['pattern_info']['pattern']] if 'pattern_info' in item_pattern[0].keys() else list()
-    conjugation = self.get_conju(item['conju_info']) if ('형용사' in pos or '동사' in pos) and ('conju_info' in item.keys()) else list()
+    conjugation = item['conju_info'] if 'conju_info' in item.keys() else list()
 
-    return Wordinfo(word = item['word'],
-                    word_unit = item['word_unit'],
-                    syntax = pattern,
-                    conjugation = conjugation,
-                    pos = pos,
-                    definition = list(filter(lambda x: x['definition'], item_pattern[0]['sense_info'])),
-                    word_type = '일반어',
-                    source = 'SKD')
+    return [Wordinfo.update({'word' : item['word'], 
+                             'unit' : item['word_unit'],
+                             'syntax' : pattern,
+                             'conjugation' : conjugation,
+                             'pos' : pos,
+                             'definition' : sense_info['definition'],
+                             'word_type' : '표준어'}) for sense_info in item_pattern[0]['sense_info']]
   
   def _our_info(self, item) -> Dict[str, Union[List[str], str]]:
     """Get word information from a json file downloaded from Open Korean Dictionary
     (https://opendict.korean.go.kr/main)"""
     pos = item['senseinfo']['pos'] if 'pos' in item['senseinfo'].keys() else '품사 없음'
     pattern = [x['pattern'] for x in item['senseinfo']['pattern_info']] if 'pattern_info' in item['senseinfo'].keys() else list()
-    conjugation = self.get_conju(item['wordinfo']['conju_info']) if ('형용사' in pos or '동사' in pos) and ('conju_info' in item['wordinfo'].keys()) else list()
-    
-    return Wordinfo(word = item['wordinfo']['word'],
-                    word_unit = item['wordinfo']['word_unit'],
-                    syntax = pattern,
-                    conjugation = conjugation,
-                    pos = pos,
-                    definition = [item['senseinfo']['definition']],
-                    word_type = item['senseinfo']['type'],
-                    source = 'OKD')
+    conjugation = item['wordinfo']['conju_info'] if 'conju_info' in item['wordinfo'].keys() else list()
+
+    return Wordinfo.update({'word' : item['wordinfo']['word'],
+                            'unit' : item['wordinfo']['word_unit'],
+                            'syntax' : pattern,
+                            'conjugation' : conjugation,
+                            'pos' : pos,
+                            'definition' : item['senseinfo']['definition'],
+                            'word_type' : item['senseinfo']['type']})
