@@ -47,10 +47,10 @@ class KoreanCorpus:
   
   def _build(self, data):
     if self.standard == True:
-      return sum(list(map(self._standard_info, tqdm(data['channel']['item']))),[])
+      return sum(list(map(self._standard_info, data['channel']['item'])),[])
     
     else:
-      return list(map(self._our_info, tqdm(data['channel']['item'])))
+      return list(map(self._our_info, data['channel']['item']))
   
   def get_conju(self, item : List[Dict[str, str]]) -> List[Tuple[str, str]]:
     """Return conjugation forms of a word"""
