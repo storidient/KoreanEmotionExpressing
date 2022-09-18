@@ -10,14 +10,10 @@ class Wordinfo:
   definition : str
   pos : str
   conjugation : list = field(converter = clean_conju)
-  word : str = field(converter = lambda x : re.sub('[0-9\^\_]','',x),
-                     eq = False)
-  options : list = field(converter = lambda x : '&'.join(sorted(x)),
-                         eq = False)
-  syntax : list = field(converter = lambda x : '&'.join(sorted(x)), 
-                        eq = False)
-  synonym : list = field(converter = lambda x : '&'.join(sorted(x)),
-                         eq = False)
+  word : str = field(converter = lambda x : re.sub('[0-9\^\_]','',x))
+  options : list = field(converter = lambda x : '&'.join(sorted(x)))
+  syntax : list = field(converter = lambda x : '&'.join(sorted(x)))
+  synonym : list = field(converter = lambda x : '&'.join(sorted(x)))
   unit : str = field(eq = False)
   word_type : str = field(eq = False)
 
