@@ -76,7 +76,7 @@ class KordictDataset:
                              'conjugation' : conjugation,
                              'pos' : pos,
                              'definition' : sense_info['definition'],
-                             'word_type' : '표준어'}) for sense_info in item_pattern[0]['sense_info']]
+                             'word_type' : '일반어'}) for sense_info in item_pattern[0]['sense_info']]
   
   def _our_info(self, item) -> Dict[str, Union[List[str], str]]:
     """Get word information from a json file downloaded from Open Korean Dictionary (https://opendict.korean.go.kr/main)"""
