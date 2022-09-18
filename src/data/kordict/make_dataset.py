@@ -1,6 +1,7 @@
 import json, re
 from typing import Dict, List, Tuple, Union
 from src.data.kordict.utils import CleanRepr, CleanDef, clean_conju
+from src.data.utils import OLD_KOR_UNICODE
 import numpy as np
 from attrs import define, field
 
@@ -37,8 +38,7 @@ class Wordinfo:
     
     
 class KordictDataset:
-  from src.data.utils import OLD_KOR_UNICODE
-      filter = re.compile('.*'+'['+ ''.join(['%s-%s' % (s,e) for s,e in OLD_KOR_UNICODE]) + ']|[ㄱ-ㅎㅏ-ㅣ]+$', re.UNICODE)
+  filter = re.compile('.*'+'['+ ''.join(['%s-%s' % (s,e) for s,e in OLD_KOR_UNICODE]) + ']|[ㄱ-ㅎㅏ-ㅣ]+$', re.UNICODE)
     
   def __init__(self, 
                path : str, 
