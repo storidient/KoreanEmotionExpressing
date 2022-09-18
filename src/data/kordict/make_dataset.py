@@ -37,6 +37,9 @@ class Wordinfo:
     
     
 class KordictDataset:
+  from src.data.utils import OLD_KOR_UNICODE
+      filter = re.compile('.*'+'['+ ''.join(['%s-%s' % (s,e) for s,e in OLD_KOR_UNICODE]) + ']|[ㄱ-ㅎㅏ-ㅣ]+$', re.UNICODE)
+    
   def __init__(self, 
                path : str, 
                standard : bool = True,
@@ -52,14 +55,8 @@ class KordictDataset:
   def _build(self):
     data = self._open(self.path)['channel']['item']
     output = sum(list(map(self._standard_info, data)),[]) if self.standard == True else list(map(self._our_info, data))
-  
-    if self.filter_old_kor == True:
-      from src.data.utils import OLD_KOR_UNICODE
-      kor_filter = re.compile('.*'+'['+ ''.join(['%s-%s' % (s,e) for s,e in OLD_KOR_UNICODE]) + ']|[ㄱ-ㅎㅏ-ㅣ]+$', re.UNICODE)
-      return list(filter(lambda x : not kor_filter.match(x.repr), output))
-    
-    else:
-      return output
+    output = list(filter(lambda x : not self.filter.match(x.repr), output)) if self.filter_old_kor == True else output
+    return output
   
   def _standard_info(self, item) -> Dict[str, Union[List[str], str]]:
     """Get word information from a json file downloaded from Standard Korean Dictionary (https://stdict.korean.go.kr/main/main.do)"""
