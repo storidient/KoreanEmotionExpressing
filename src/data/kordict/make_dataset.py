@@ -39,16 +39,16 @@ class KordictDataset:
   def __init__(self, 
                path : str, 
                standard : bool = True):
-    self.data = self._open(path)
-    self.standard = standard
-    self.output = self._build(data)
+    self.path, self.standard = path, standard
+    self.output = self._build()
   
   def _open(self, path):
     with open(path, 'r') as f:
       data = json.load(f)
     return data
     
-  def _build(self, data):
+  def _build(self):
+    data = self._open(self.path)
     if self.standard == True:
       return sum(list(map(self._standard_info, data['channel']['item'])),[])
     
