@@ -26,7 +26,7 @@ class Wordinfo:
     
     info.update({
       'unit' : unit,
-      'pos' : pos
+      'pos' : pos,
       'repr' : repr,
       'options' : options,
       'definition' : definition,
