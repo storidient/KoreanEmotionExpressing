@@ -14,19 +14,25 @@ class Wordinfo:
   options : list = field(converter = lambda x : '&'.join(sorted(x)))
   syntax : list = field(converter = lambda x : '&'.join(sorted(x)))
   synonym : list = field(converter = lambda x : '&'.join(sorted(x)))
-  unit : str = field(eq = False)
-  word_type : str = field(eq = False)
+  unit : str = field
+  word_type : str = field
 
   @classmethod
   def update(cls, info : Dict):
     repr, options = CleanRepr(info['word']).output
     definition, synonym = CleanDef(info['definition'],info['word']).output
+    unit = '단어' if item['unit'] in ['단어', '어휘'] else '구'
+    pos = '구' if unit == '구' else item['pos']
+    
     info.update({
-        'repr' : repr,
-        'options' : options,
-        'definition' : definition,
-        'synonym' : synonym
+      'unit' : unit,
+      'pos' : pos
+      'repr' : repr,
+      'options' : options,
+      'definition' : definition,
+      'synonym' : synonym
     })
+    
     return cls(**info)
     
     
