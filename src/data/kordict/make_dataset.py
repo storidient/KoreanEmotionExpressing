@@ -4,7 +4,6 @@ from src.data.kordict.utils import CleanRepr, CleanDef, clean_conju
 import numpy as np
 from attrs import define, field
 
-
 @define(frozen = True)
 class Wordinfo:
   repr : str
@@ -38,8 +37,9 @@ class Wordinfo:
 class KordictDataset:
   def __init__(self, 
                path : str, 
-               standard : bool = True):
-    self.path, self.standard = path, standard
+               standard : bool = True,
+               filter_old_kor : bool = True):
+    self.path, self.standard, self.filter_old_kor = path, standard, filter_old_kor
     self.output = self._build()
   
   def _open(self, path):
@@ -48,12 +48,16 @@ class KordictDataset:
     return data
     
   def _build(self):
-    data = self._open(self.path)
-    if self.standard == True:
-      return sum(list(map(self._standard_info, data['channel']['item'])),[])
+    data = self._open(self.path)['channel']['item']
+    output = sum(list(map(self._standard_info, data)),[]) if self.standard == True else list(map(self._our_info, data))
+  
+    if self.filter_old_kor == True:
+      from src.data.utils import OLD_KOR_UNICODE
+      kor_filter = re.compile('.*'+'['+ ''.join(['%s-%s' % (s,e) for s,e in OLD_KOR_UNICODE]) + ']|[ㄱ-ㅎㅏ-ㅣ]+$', re.UNICODE)
+      return list(filter(lambda x : not kor_filter.match(x.repr), output))
     
     else:
-      return list(map(self._our_info, data['channel']['item']))
+      return output
   
   def _standard_info(self, item) -> Dict[str, Union[List[str], str]]:
     """Get word information from a json file downloaded from Standard Korean Dictionary (https://stdict.korean.go.kr/main/main.do)"""
@@ -85,6 +89,3 @@ class KordictDataset:
                             'pos' : pos,
                             'definition' : item['senseinfo']['definition'],
                             'word_type' : item['senseinfo']['type']})
-  
-  def __getitem__(self, idx):
-    return self.output[idx]
