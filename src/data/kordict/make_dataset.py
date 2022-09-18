@@ -21,8 +21,8 @@ class Wordinfo:
   def update(cls, info : Dict):
     repr, options = CleanRepr(info['word']).output
     definition, synonym = CleanDef(info['definition'],info['word']).output
-    unit = '단어' if item['unit'] in ['단어', '어휘'] else '구'
-    pos = '구' if unit == '구' else item['pos']
+    unit = '단어' if info['unit'] in ['단어', '어휘'] else '구'
+    pos = '구' if unit == '구' else info['pos']
     
     info.update({
       'unit' : unit,
