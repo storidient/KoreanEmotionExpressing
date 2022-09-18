@@ -33,17 +33,21 @@ class Wordinfo:
         'synonym' : synonym
     })
     return cls(**info)
-
     
-class KoreanCorpus:
+    
+class KordictDataset:
   def __init__(self, 
                path : str, 
                standard : bool = True):
+    self.data = self._open(path)
     self.standard = standard
-    with open(path, 'r') as f:
-      data = json.load(f)
     self.output = self._build(data)
   
+  def _open(self, path):
+    with open(path, 'r') as f:
+      data = json.load(f)
+    return data
+    
   def _build(self, data):
     if self.standard == True:
       return sum(list(map(self._standard_info, data['channel']['item'])),[])
@@ -51,14 +55,8 @@ class KoreanCorpus:
     else:
       return list(map(self._our_info, data['channel']['item']))
   
-  def get_conju(self, item : List[Dict[str, str]]) -> List[Tuple[str, str]]:
-    """Return conjugation forms of a word"""
-    return [(x['conjugation_info']['conjugation'],
-             x['abbreviation_info']['abbreviation'] if 'abbreviation_info' in x.keys() else None) for x in item]
-  
   def _standard_info(self, item) -> Dict[str, Union[List[str], str]]:
-    """Get word information from a json file downloaded from Standard Korean Dictionary
-    (https://stdict.korean.go.kr/main/main.do)"""
+    """Get word information from a json file downloaded from Standard Korean Dictionary (https://stdict.korean.go.kr/main/main.do)"""
     item = item['word_info']
     item_pos = item['pos_info']
     item_pattern = item_pos[0]['comm_pattern_info']
@@ -75,8 +73,7 @@ class KoreanCorpus:
                              'word_type' : '표준어'}) for sense_info in item_pattern[0]['sense_info']]
   
   def _our_info(self, item) -> Dict[str, Union[List[str], str]]:
-    """Get word information from a json file downloaded from Open Korean Dictionary
-    (https://opendict.korean.go.kr/main)"""
+    """Get word information from a json file downloaded from Open Korean Dictionary (https://opendict.korean.go.kr/main)"""
     pos = item['senseinfo']['pos'] if 'pos' in item['senseinfo'].keys() else '품사 없음'
     pattern = [x['pattern'] for x in item['senseinfo']['pattern_info']] if 'pattern_info' in item['senseinfo'].keys() else list()
     conjugation = item['wordinfo']['conju_info'] if 'conju_info' in item['wordinfo'].keys() else list()
@@ -88,3 +85,6 @@ class KoreanCorpus:
                             'pos' : pos,
                             'definition' : item['senseinfo']['definition'],
                             'word_type' : item['senseinfo']['type']})
+  
+  def __getitem__(self, idx):
+    return self.output[idx]
