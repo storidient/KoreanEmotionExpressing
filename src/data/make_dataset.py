@@ -1,14 +1,14 @@
 import os
 import sys
+import argparse
 import json
 import re
-import argparse
 from pathlib import Path
 from tqdm import tqdm
 from itertools import groupby
 from typing import Dict, List, Tuple, Union
-from src.data.kordict.utils import CleanRepr, CleanDef, clean_conju
-from src.data.utils import OLD_KOR_UNICODE
+from kordict.utils import CleanRepr, CleanDef, clean_conju
+from utils import OLD_KOR_UNICODE
 import numpy as np
 from attrs import define, field, asdict
 
