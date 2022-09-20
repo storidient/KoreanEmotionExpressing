@@ -125,7 +125,7 @@ if __name__ == '__main__':
   output = {k : list(map(lambda x : asdict(x), g)) for k, g in 
             groupby(sorted(total, key = lambda x: x.repr), key = lambda x : x.repr)}
 
-  with open("args.save_dir + 'korean_dataset.jsonl", "w", encoding="utf-8") as f:
+  with open(Path(args.save_dir)/ 'korean_dataset.jsonl', "w", encoding="utf-8") as f:
     json.dump(output, f, ensure_ascii=False)
     f.write("\n")
  
