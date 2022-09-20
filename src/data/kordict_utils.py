@@ -190,4 +190,4 @@ class CleanDef:
       tokens, token_idx = self._split(revised)
       output = [self._clean_synonym(t) if i in token_idx else self._clean_def(t) for i, t in enumerate(tokens)]
       definition = ''.join(output[token_idx[0]:]) if revised.startswith('→') else ''.join(output)
-      return definition, [re.sub('[‘’]', '',self._clean_synonym(t)) for i, t in enumerate(tokens) if i in token_idx]
+      return CleanStr.clear_space(definition), [re.sub('[‘’]', '',self._clean_synonym(t)) for i, t in enumerate(tokens) if i in token_idx]
