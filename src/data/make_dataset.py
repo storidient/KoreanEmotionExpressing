@@ -7,8 +7,7 @@ from pathlib import Path
 from tqdm import tqdm
 from itertools import groupby
 from typing import Dict, List, Tuple, Union
-from kordict.utils import CleanRepr, CleanDef, clean_conju
-from utils import OLD_KOR_UNICODE
+from utils import CleanRepr, CleanDef, clean_conju, OLD_KOR_UNICODE
 import numpy as np
 from attrs import define, field, asdict
 
