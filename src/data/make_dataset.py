@@ -3,15 +3,19 @@ import sys
 import argparse
 import json
 import re
+import logging
+import numpy as np
+
+from typing import Dict, List, Tuple, Union
 from pathlib import Path
 from tqdm import tqdm
 from itertools import groupby
-from typing import Dict, List, Tuple, Union
-from utils import OLD_KOR_UNICODE
-from kordict_utils import CleanRepr, CleanDef, clean_conju
-import numpy as np
 from attrs import define, field, asdict
 
+from utils import OLD_KOR_UNICODE
+from kordict_utils import CleanRepr, CleanDef, clean_conju
+
+logger = logging.getLogger(__name__)
 
 @define(frozen = True)
 class Wordinfo:
@@ -98,7 +102,7 @@ class KordictDataset:
                             'word_type' : item['senseinfo']['type']})
 
   
-if __name__ == 'main':
+if __name__ == '__main__':
   sys.path.append(os.getcwd())
   parser = argparse.ArgumentParser()
   parser.add_argument("--standard_kordict_dir", type=str, default = '')
@@ -110,10 +114,12 @@ if __name__ == 'main':
   if args.standard_kordict_dir != '':
     for x in tqdm(Path(args.standard_kordict_dir).glob('**/*.json')):
       total += KordictDataset(x).output
-
-  if args.standard_kordict_dir != '':
-    for x in tqdm(Path(args.standard_kordict_dir).glob('**/*.json')):
+  
+  if args.our_kordict_dir != '':
+    for x in tqdm(Path(args.our_kordict_dir).glob('**/*.json')):
       total += KordictDataset(x, False).output
+  
+  logger.info('===%d words are dowloaded===' % (len(total)))
 
   total = list(set(total))
   output = {k : list(map(lambda x : asdict(x), g)) for k, g in 
@@ -122,3 +128,5 @@ if __name__ == 'main':
   with open("args.save_dir + 'korean_dataset.jsonl", "w", encoding="utf-8") as f:
     json.dump(output, f, ensure_ascii=False)
     f.write("\n")
+ 
+  logger.info('===Data saved===')
