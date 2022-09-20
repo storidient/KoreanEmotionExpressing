@@ -8,7 +8,7 @@ from tqdm import tqdm
 from itertools import groupby
 from typing import Dict, List, Tuple, Union
 from utils import OLD_KOR_UNICODE
-from kordict_utils import CleanRepr, CleanDef
+from kordict_utils import CleanRepr, CleanDef, clean_conju
 import numpy as np
 from attrs import define, field, asdict
 
