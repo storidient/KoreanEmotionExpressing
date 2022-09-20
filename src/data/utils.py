@@ -75,7 +75,13 @@ class Brackets:
   @classmethod
   def starts(cls, mark : Optional[str] = None):
     output = [v.start for k,v in cls.__dict__.items() if k.startswith('b')]
-    return output if mark == None else [x for x in output if mark not in x]  
+    return output if mark == None else [x for x in output if mark not in x]
+  
+  @classmethod
+  def get_ends(cls, mark : str):
+    output = [v for k, v in cls.__dict__.items() if k.startswith('b')]
+    ends = [v.end for v in output if v.start == mark]
+    return ends[0] if len(ends) > 0 else ''
   
   @classmethod
   def search(cls, mark_name : str):
@@ -119,7 +125,7 @@ class CleanStr:
   def rx_bracket(cls, rx_str_list : List[str]) -> str:
     """Return the input items surrounded with brackets"""
     input = build_rx(rx_str_list, False)
-    return cls.b_start + '[\W_ ]*' + input + '+[\W_ ]*' + input + '*' + cls.b_end
+    return '|'.join([start + '[\W_ ]*' + input + '+[\W_ ]*' + input + '*' + Brackets.get_ends(start) for start in Brackets.starts()])
   
   @classmethod
   def unify(cls, line : str) -> str:
