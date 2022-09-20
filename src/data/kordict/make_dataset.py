@@ -1,9 +1,17 @@
-import json, re
+import os
+import sys
+import json
+import re
+import argparse
+from pathlib import Path
+from tqdm import tqdm
+from itertools import groupby
 from typing import Dict, List, Tuple, Union
 from src.data.kordict.utils import CleanRepr, CleanDef, clean_conju
 from src.data.utils import OLD_KOR_UNICODE
 import numpy as np
-from attrs import define, field
+from attrs import define, field, asdict
+
 
 @define(frozen = True)
 class Wordinfo:
@@ -88,3 +96,29 @@ class KordictDataset:
                             'pos' : pos,
                             'definition' : item['senseinfo']['definition'],
                             'word_type' : item['senseinfo']['type']})
+
+  
+if __name__ == 'main':
+  sys.path.append(os.getcwd())
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--standard_kordict_dir", type=str, default = '')
+  parser.add_argument("--our_kordict_dir", type=str, default = '')
+  parser.add_argument("--save_dir", type=str, default = './')
+  args = parser.parse_args()
+
+  total = list()
+  if args.standard_kordict_dir != '':
+    for x in tqdm(Path(args.standard_kordict_dir).glob('**/*.json')):
+      total += KordictDataset(x).output
+
+  if args.standard_kordict_dir != '':
+    for x in tqdm(Path(args.standard_kordict_dir).glob('**/*.json')):
+      total += KordictDataset(x, False).output
+
+  total = list(set(total))
+  output = {k : list(map(lambda x : asdict(x), g)) for k, g in 
+            groupby(sorted(total, key = lambda x: x.repr), key = lambda x : x.repr)}
+
+  with open("args.save_dir + 'korean_dataset.jsonl", "w", encoding="utf-8") as f:
+    json.dump(output, f, ensure_ascii=False)
+    f.write("\n")
