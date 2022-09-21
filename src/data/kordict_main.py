@@ -118,8 +118,6 @@ if __name__ == '__main__':
   if args.our_kordict_dir != '':
     for x in tqdm(Path(args.our_kordict_dir).glob('**/*.json')):
       total += KordictDataset(x, False).output
-  
-  logger.info('===%d words are dowloaded===' % (len(total)))
 
   total = list(set(total))
   output = {k : list(map(lambda x : asdict(x), g)) for k, g in 
@@ -127,5 +125,3 @@ if __name__ == '__main__':
 
   with open(Path(args.save_dir)/ 'korean_dataset.json', "w", encoding="utf-8") as f:
     json.dump(output, f, ensure_ascii=False)
- 
-  logger.info('===Data saved===')
