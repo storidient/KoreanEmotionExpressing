@@ -4,6 +4,7 @@ import re
 from jamo import j2hcj, h2j
 from itertools import groupby
 import json, jsonlines
+from pathlib import Path
 from cached_property import cached_property
 from typing import List, Dict, Union, Tuple
 
@@ -119,13 +120,16 @@ class SearchPattern(FindConjugation):
 
 if __name__  == '__main__':
   sys.path.append(os.getcwd())
+  
   parser = argparse.ArgumentParser()
   parser.add_argument("--kordata_dir", type=str)
   parser.add_argument("--corpus_dir", type=str)
+  parser.add_argument("--save_dir", type=str)
+  
   args = parser.parse_args()
-  corpus_data = pd.read_csv(args.corpus_dir)
-
-  with open(args.kordata_dir, 'r') as f:
+  
+  corpus_data = pd.read_csv(Path(args.corpus_dir))
+  with open(Path(args.kordata_dir), 'r') as f:
     kor_data = json.load(f, encoding = 'utf-8')
 
   search_pattern = SearchPattern(kor_data)
@@ -146,3 +150,6 @@ if __name__  == '__main__':
   corpus_df['emotion'] = [[x] if type(x) == str else x for x in corpus_df['emotion']]
   corpus_data = corpus_df.to_dict('records')
   
+  fname = 'corpus_' + str(Path(args.corpus_dir).parts[-1]).replace('.csv', '.json')                 
+  with open(Path(args.save_dir)/ fname, "w", encoding="utf-8") as f:
+    json.dump(corpus_data, f, ensure_ascii=False)
