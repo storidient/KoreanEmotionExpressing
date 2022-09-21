@@ -5,6 +5,7 @@ from jamo import j2hcj, h2j
 from itertools import groupby
 import json
 import argparse
+import pandas as pd
 from pathlib import Path
 from cached_property import cached_property
 from typing import List, Dict, Union, Tuple
