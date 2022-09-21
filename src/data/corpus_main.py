@@ -141,15 +141,15 @@ if __name__  == '__main__':
 
   if 'ekman' in corpus_data.columns:
     corpus_df['emotion'] = corpus_data['ekman']
-  
-  elif 'emotion' in corpus_data.colums:
-    corpus_df['emotion'] = corpus_data['emotion']
 
   elif 'emotion_1' in corpus_data.columns:
     emotion = pd.concat([corpus_data['emotion_1'],
                          corpus_data['emotion_2'], 
                          corpus_data['emotion_3']], axis = 1)
     corpus_df['emotion'] = [list(filter(lambda x : type(x) == str, emo_list)) for emo_list in emotion.values]
+    
+  elif 'emotion' in corpus_data.columns:
+    corpus_df['emotion'] = corpus_data['emotion']
 
   corpus_df = corpus_df[corpus_df['emotion'] != 'None']
   corpus_df['emotion'] = [[x] if type(x) == str else x for x in corpus_df['emotion']]
