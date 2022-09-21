@@ -1,3 +1,5 @@
+import sys
+import os
 import re
 from jamo import j2hcj, h2j
 from itertools import groupby
@@ -116,9 +118,14 @@ class SearchPattern(FindConjugation):
 
 
 if __name__  == '__main__':
-  corpus_data = pd.read_csv(corpus_dir)
+  sys.path.append(os.getcwd())
+  parser = argparse.ArgumentParser()
+  parser.add_argument("--kordata_dir", type=str)
+  parser.add_argument("--corpus_dir", type=str)
+  args = parser.parse_args()
+  corpus_data = pd.read_csv(args.corpus_dir)
 
-  with open(kordata_dir, 'r') as f:
+  with open(args.kordata_dir, 'r') as f:
     kor_data = json.load(f, encoding = 'utf-8')
 
   search_pattern = SearchPattern(kor_data)
