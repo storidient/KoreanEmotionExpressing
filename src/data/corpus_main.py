@@ -149,8 +149,8 @@ if __name__  == '__main__':
     corpus_df['emotion'] = [list(filter(lambda x : type(x) == str, emo_list)) for emo_list in emotion.values]
     
   elif 'emotion' in corpus_data.columns:
-    corpus_df['emotion'] = corpus_data['emotion']
-
+    corpus_df['emotion'] = [x.split('/') for x in corpus_data['emotion']]
+    
   corpus_df = corpus_df[corpus_df['emotion'] != 'None']
   corpus_df['emotion'] = [[x] if type(x) == str else x for x in corpus_df['emotion']]
   corpus_data = corpus_df.to_dict('records')
