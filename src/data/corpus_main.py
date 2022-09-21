@@ -155,6 +155,6 @@ if __name__  == '__main__':
   corpus_df['emotion'] = [[x] if type(x) == str else x for x in corpus_df['emotion']]
   corpus_data = corpus_df.to_dict('records')
   
-  fname = 'corpus_' + str(Path(args.corpus_dir).parts[-1]).replace('.csv', '.json')                 
+  fname = 'corpus_' + str(Path(args.corpus_dir).parts[-1]).replace('.csv', '.jsonl')                 
   with open(fname, "w", encoding="utf-8") as f:
     f.write(json.dumps(corpus_data, ensure_ascii=False) + "\n")
