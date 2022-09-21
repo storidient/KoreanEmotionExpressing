@@ -3,7 +3,8 @@ import os
 import re
 from jamo import j2hcj, h2j
 from itertools import groupby
-import json, jsonlines
+import json
+import jsonlines
 from pathlib import Path
 from cached_property import cached_property
 from typing import List, Dict, Union, Tuple
