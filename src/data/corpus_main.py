@@ -140,6 +140,9 @@ if __name__  == '__main__':
 
   if 'ekman' in corpus_data.columns:
     corpus_df['emotion'] = corpus_data['ekman']
+  
+  elif 'emotion' in corpus_data.colums:
+    corpus_df['emotion'] = corpus_data['emotion']
 
   elif 'emotion_1' in corpus_data.columns:
     emotion = pd.concat([corpus_data['emotion_1'],
