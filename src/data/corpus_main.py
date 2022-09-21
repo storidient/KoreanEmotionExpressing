@@ -111,13 +111,13 @@ class SearchPattern(FindConjugation):
       output = [verb[:-1]] if verb[:-1] in conju else [verb[:-1], conju]
       output += add_conjugation(verb, conju)
 
-      return {'type' : 'phrase', 'search_pattern' : (noun, set(output))}
+      return {'type' : 'phrase', 'search_pattern' : [noun, list(set(output))]}
 
     else:
       conju = self.find(word)
       output = [word[:-1]] if word[:-1] in conju else [word[:-1], conju]
       output += add_conjugation(word, conju)
-      return {'type' : 'verb', 'search_pattern' : set(output)}
+      return {'type' : 'verb', 'search_pattern' : list(set(output))}
 
 
 if __name__  == '__main__':
@@ -156,5 +156,5 @@ if __name__  == '__main__':
   corpus_data = corpus_df.to_dict('records')
   
   fname = 'corpus_' + str(Path(args.corpus_dir).parts[-1]).replace('.csv', '.json')                 
-  with open(Path(args.save_dir)/ fname, "w", encoding="utf-8") as f:
-    json.dump(corpus_data, f, ensure_ascii=False)
+  with open(fname, "w", encoding="utf-8") as f:
+    f.write(json.dumps(corpus_data, ensure_ascii=False) + "\n")
