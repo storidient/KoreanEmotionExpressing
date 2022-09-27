@@ -107,6 +107,7 @@ if __name__ == '__main__':
   parser = argparse.ArgumentParser()
   parser.add_argument("--standard_kordict_dir", type=str, default = '')
   parser.add_argument("--our_kordict_dir", type=str, default = '')
+  parser.add_argument("--save_dict", type=bool, default = True)
   parser.add_argument("--save_dir", type=str, default = './')
   args = parser.parse_args()
 
@@ -120,8 +121,13 @@ if __name__ == '__main__':
       total += KordictDataset(x, False).output
 
   total = list(set(total))
-  output = {k : list(map(lambda x : asdict(x), g)) for k, g in 
-            groupby(sorted(total, key = lambda x: x.repr), key = lambda x : x.repr)}
-
-  with open(Path(args.save_dir)/ 'korean_dataset.json', "w", encoding="utf-8") as f:
-    json.dump(output, f, ensure_ascii=False)
+  if args.save_dict == True:
+    output = {k : list(map(lambda x : asdict(x), g)) for k, g in 
+              groupby(sorted(total, key = lambda x: x.repr), key = lambda x : x.repr)}
+    with open(Path(args.save_dir)/ 'korean_dataset.json', "w", encoding="utf-8") as f:
+      json.dump(output, f, ensure_ascii=False)
+  
+  else:
+    with open(Path(args.save_dir)/ 'korean_dataset.jsonl', "w", encoding="utf-8") as f:
+      for i in total: 
+        f.write(json.dumps(i) + "\n")
