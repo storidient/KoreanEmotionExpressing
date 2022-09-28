@@ -26,6 +26,30 @@ def clean_conju(item : List[Dict[str, str]]) -> str:
   return output[0] if len(output) > 0 else ''
 
 
+def get_full_pos(pos : str) -> str:
+  """Change the abbreviation form of pos into the full one"""
+  if pos == '관':
+    return '관형사'
+    
+  elif pos == '대':
+    return '대명사'
+  
+  elif pos == '감' :
+    return '감탄사'
+  
+  elif pos == '동':
+    return '동사'
+  
+  elif pos == '형' :
+    return '형용사'
+  
+  elif pos == '의명':
+    return '의존명사'
+  
+  else:
+    return pos + '사'
+
+
 class Options:
   """
   Change the representation form with [/] into a list of all the possible forms
