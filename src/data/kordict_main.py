@@ -12,10 +12,14 @@ from tqdm import tqdm
 from itertools import groupby
 from attrs import define, field, asdict
 
-from utils import OLD_KOR_UNICODE
-from kordict_utils import CleanRepr, CleanDef, clean_conju
+try:
+  from .utils import OLD_KOR_UNICODE
+  from .kordict_utils import CleanRepr, CleanDef, clean_conju
 
-logger = logging.getLogger(__name__)
+except:
+  from src.data.utils import OLD_KOR_UNICODE
+  from src.data.kordict_utils import CleanRepr, CleanDef, clean_conju
+
 
 @define(frozen = True)
 class Wordinfo:
@@ -136,6 +140,6 @@ if __name__ == '__main__':
   
   else:
     with open(Path(args.save_dir)/ 'korean_dataset.jsonl', "w", encoding="utf-8") as f:
-      output = list(filter(lambda x : asdict(x), total))
+      output = list(map(lambda x : asdict(x), total))
       for i in output: 
         f.write(json.dumps(i) + "\n")
