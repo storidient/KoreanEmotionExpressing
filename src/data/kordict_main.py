@@ -18,9 +18,9 @@ try:
 
 except:
   from src.data.utils import OLD_KOR_UNICODE
-  from src.data.kordict_utils import CleanRepr, CleanDef, clean_conju
+  from src.data.kordict_utils import CleanRepr, CleanDef, clean_conju, get_full_pos
 
-
+  
 @define(frozen = True)
 class Wordinfo:
   repr : str
@@ -41,7 +41,7 @@ class Wordinfo:
     unit = '단어' if info['unit'] in ['단어', '어휘'] else '구'
     pos = '구' if unit == '구' else info['pos']
     if '·' in pos:
-      pos = '/'.join([_ +'사' for _ in pos.split('·')])
+      pos = '/'.join([get_full_pos(_) for _ in pos.split('·')])
     
     info.update({
       'unit' : unit,
