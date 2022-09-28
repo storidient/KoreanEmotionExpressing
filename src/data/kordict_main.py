@@ -105,10 +105,16 @@ class KordictDataset:
 if __name__ == '__main__':
   sys.path.append(os.getcwd())
   parser = argparse.ArgumentParser()
-  parser.add_argument("--standard_kordict_dir", type=str, default = '')
-  parser.add_argument("--our_kordict_dir", type=str, default = '')
-  parser.add_argument("--save_dict", type=bool, default = True)
+  parser.add_argument("--kordict_dir_standard", 
+                      type=str, 
+                      default = '', 
+                      help = 'The folder of json files downloaded from Standard Korean Dictionary')
+  parser.add_argument("--kordict_dir_our", 
+                      type=str, 
+                      default = '', 
+                      help = 'The folder of json files downloaded from Our Korean Dictionary')
   parser.add_argument("--save_dir", type=str, default = './')
+  parser.add_argument("--save_as_dict", type=bool, default = False)
   args = parser.parse_args()
 
   total = list()
@@ -121,7 +127,8 @@ if __name__ == '__main__':
       total += KordictDataset(x, False).output
 
   total = list(set(total))
-  if args.save_dict == True:
+  
+  if args.save_as_dict == True:
     output = {k : list(map(lambda x : asdict(x), g)) for k, g in 
               groupby(sorted(total, key = lambda x: x.repr), key = lambda x : x.repr)}
     with open(Path(args.save_dir)/ 'korean_dataset.json', "w", encoding="utf-8") as f:
