@@ -136,5 +136,6 @@ if __name__ == '__main__':
   
   else:
     with open(Path(args.save_dir)/ 'korean_dataset.jsonl', "w", encoding="utf-8") as f:
-      for i in total: 
+      output = list(filter(lambda x : asdict(x), total))
+      for i in output: 
         f.write(json.dumps(i) + "\n")
