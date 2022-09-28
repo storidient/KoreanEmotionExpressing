@@ -40,6 +40,8 @@ class Wordinfo:
     definition, synonym = CleanDef(info['definition'],info['word']).output
     unit = '단어' if info['unit'] in ['단어', '어휘'] else '구'
     pos = '구' if unit == '구' else info['pos']
+    if '·' in pos:
+      pos = '/'.join([_ +'사' for _ in pos.split('·')])
     
     info.update({
       'unit' : unit,
