@@ -105,11 +105,11 @@ class KordictDataset:
 if __name__ == '__main__':
   sys.path.append(os.getcwd())
   parser = argparse.ArgumentParser()
-  parser.add_argument("--kordict_dir_standard", 
+  parser.add_argument("--skd_dir", 
                       type=str, 
                       default = '', 
                       help = 'The folder of json files downloaded from Standard Korean Dictionary')
-  parser.add_argument("--kordict_dir_our", 
+  parser.add_argument("--okd_dir", 
                       type=str, 
                       default = '', 
                       help = 'The folder of json files downloaded from Our Korean Dictionary')
@@ -118,12 +118,12 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   total = list()
-  if args.standard_kordict_dir != '':
-    for x in tqdm(Path(args.standard_kordict_dir).glob('**/*.json')):
+  if args.skd_dir != '':
+    for x in tqdm(Path(args.skd_dir).glob('**/*.json')):
       total += KordictDataset(x).output
   
-  if args.our_kordict_dir != '':
-    for x in tqdm(Path(args.our_kordict_dir).glob('**/*.json')):
+  if args.okd_dir != '':
+    for x in tqdm(Path(args.okd_dir).glob('**/*.json')):
       total += KordictDataset(x, False).output
 
   total = list(set(total))
