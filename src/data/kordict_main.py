@@ -14,7 +14,7 @@ from attrs import define, field, asdict
 
 try:
   from utils import OLD_KOR_UNICODE
-  from kordict_utils import CleanRepr, CleanDef, clean_conju
+  from kordict_utils import CleanRepr, CleanDef, clean_conju, get_full_pos
 
 except:
   from src.data.utils import OLD_KOR_UNICODE
