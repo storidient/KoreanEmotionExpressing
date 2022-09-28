@@ -1,12 +1,17 @@
 import re
 from typing import List, Dict, Optional, Union
-from utils import ROMAN_NUM_UNICODE, CHINESE_UNICODE, CleanStr
 from jamo import h2j, j2hcj
 from cached_property import cached_property
 from boltons.iterutils import pairwise
 from itertools import product
 from jamo import j2hcj, h2j
 
+try:
+  from .utils import ROMAN_NUM_UNICODE, CHINESE_UNICODE, CleanStr
+
+except:
+  from src.data.utils import ROMAN_NUM_UNICODE, CHINESE_UNICODE, CleanStr
+  
 
 EOMI = 'ㅕㅓㅏㅑㅘㅝㅐㅒㅖㅔ'
 NUMBERS =  '[' + '0-9' + ''.join(['%s-%s' % (s,e) for s,e in ROMAN_NUM_UNICODE]) + ']'
