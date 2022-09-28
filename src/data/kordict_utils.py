@@ -7,7 +7,7 @@ from itertools import product
 from jamo import j2hcj, h2j
 
 try:
-  from .utils import ROMAN_NUM_UNICODE, CHINESE_UNICODE, CleanStr
+  from utils import ROMAN_NUM_UNICODE, CHINESE_UNICODE, CleanStr
 
 except:
   from src.data.utils import ROMAN_NUM_UNICODE, CHINESE_UNICODE, CleanStr
