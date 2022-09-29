@@ -11,6 +11,37 @@ from cached_property import cached_property
 from typing import List, Dict, Union, Tuple
 
 
+def adj_conju(item : Dict[str, str]) -> str:
+  """Add adjective transformative suffix : (-으)ㄴ, 는"""
+  stem = item['repr'][:-1]
+  last_syl = j2hcj(h2j(stem[-1]))
+
+  if stem[-1] in ['있', '없'] or '동사' in item['pos']:
+    last_stem = last_syl[:-1] if last_syl[-1] == 'ㄹ' else last_syl
+    return stem[:-1] + j2h(*last_stem) + '는'
+
+  elif len(last_syl) == 2 or last_syl[-1] == 'ㄹ':
+    last_stem = last_syl[:-1] if last_syl[-1] == 'ㄹ' else last_syl
+    return stem[:-1] + j2h(*last_stem + 'ㄴ')
+  
+  elif last_syl[-1] == 'ㅎ' and stem[-1] != '좋':
+    return stem[:-1] + j2h(*last_syl[:-1] + 'ㄴ')
+
+  elif last_syl[-1] == 'ㅅ':
+    last_stem = last_syl[:-1] if stem[-1] in ['짓', '잇', '젓', '낫', '붓'] else last_syl
+    return stem[:-1] + j2h(*last_stem) + '은'
+  
+  elif stem[-1] in ['곱', '굽'] and item['conjugation'] != '':
+    conjugation = item['conjugation'].split('/')[0][-2]
+    return stem + '은' if 'ㅂ' in j2hcj(h2j(conjugation)) else stem[:-1] + j2h(*last_syl[:-1]) + '운'
+  
+  elif last_syl[-1] == 'ㅂ' and stem[-1] not in ['업', '잡', '접', '좁', '줍']:
+    return stem[:-1] + '운' if stem[-1] == '웁' else stem[:-1] + j2h(*last_syl[:-1]) + '운'
+
+  else:
+    return stem + '은'
+  
+
 def add_conjugation(verb : str, conju : str):
   stem, output = verb[:-1], list()
   jamo = j2hcj(h2j(stem))
