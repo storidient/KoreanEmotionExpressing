@@ -10,6 +10,7 @@ from pathlib import Path
 from cached_property import cached_property
 from typing import List, Dict, Union, Tuple
 
+
 def add_conjugation(verb : str, conju : str):
   stem, output = verb[:-1], list()
   jamo = j2hcj(h2j(stem))
