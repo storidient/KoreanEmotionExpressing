@@ -1,7 +1,7 @@
 import sys
 import os
 import re
-from jamo import j2hcj, h2j
+from jamo import j2hcj, h2j, j2h
 from itertools import groupby
 import json
 import argparse
