@@ -208,9 +208,6 @@ class CleanDef:
       synonym = [re.sub('[‘’]', '',self._clean_synonym(t)) for i, t in enumerate(tokens) if i in token_idx]
       return self._clean_def(definition), synonym
     
-    elif re.match('.*[‘’].*(준말|높임말|본말|줄어든.*말|이르는.*말)', revised):
-      
-
     elif re.match('.*<동의 ?(속담|관용구)>', revised):
       parts = re.split('<동의 속담>|<동의 관용구>', revised)
       definition, rest = parts[0], parts[-1]
